@@ -9,11 +9,11 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("configuration.fxml"));
-        primaryStage.setTitle("Simulación");
-        primaryStage.setScene(new Scene(root, 800, 600));
-        primaryStage.show();
+    public void start(Stage window) throws Exception{
+        Parent configFXML = FXMLLoader.load(getClass().getResource("configuration.fxml"));
+        window.setTitle("Simulación");
+        window.setScene(new Scene(configFXML, 800, 600));
+        window.show();
     }
 
 
