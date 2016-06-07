@@ -7,6 +7,7 @@ import java.util.ArrayList;
  * Contains information about all events, clients, statistics and keeps track of times in a simulation day.
  */
 public class Day {
+
     private ArrayList<Event> events = new ArrayList<>();
     private ArrayList<Client> clients = new ArrayList<>();
     private int nextArrivalTime = 0;
@@ -23,5 +24,8 @@ public class Day {
      */
     public class Event {
 
+
+
     }
+
 }
