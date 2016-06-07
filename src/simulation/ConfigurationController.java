@@ -1,4 +1,4 @@
-package sample;
+package simulation;
 
 public class ConfigurationController {
 }
