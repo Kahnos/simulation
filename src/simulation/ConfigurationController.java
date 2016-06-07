@@ -1,4 +1,4 @@
-package sample;
+package simulation;
 import javafx.scene.control.TableView;
 
 public class ConfigurationController {
