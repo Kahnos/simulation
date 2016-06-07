@@ -6,6 +6,7 @@ package simulation;
  */
 public class Client {
 
+    private int id = -1;
     private double relativeArrivalTime = -1; // Arrival time assigned by probability.
     private double realArrivalTime = -1;     // Time the client arrives into the system.
     private double departureTime = -1;       // Time the client leaves the system.
@@ -16,7 +17,8 @@ public class Client {
     public Client() {
     }
 
-    public Client(double relativeArrivalTime, double realArrivalTime, double departureTime, double serviceTime, double servedTime, double waitTime) {
+    public Client(int id, double relativeArrivalTime, double realArrivalTime, double departureTime, double serviceTime, double servedTime, double waitTime) {
+        this.id = id;
         this.relativeArrivalTime = relativeArrivalTime;
         this.realArrivalTime = realArrivalTime;
         this.departureTime = departureTime;
@@ -25,18 +27,24 @@ public class Client {
         this.waitTime = waitTime;
     }
 
-    public Client(double relativeArrivalTime, double serviceTime) {
+    public Client(int id, double relativeArrivalTime, double serviceTime) {
+        this.id = id;
         this.relativeArrivalTime = relativeArrivalTime;
         this.serviceTime = serviceTime;
     }
 
-    public Client(double relativeArrivalTime, double realArrivalTime, double serviceTime) {
+    public Client(int id, double relativeArrivalTime, double realArrivalTime, double serviceTime) {
+        this.id = id;
         this.relativeArrivalTime = relativeArrivalTime;
         this.realArrivalTime = realArrivalTime;
         this.serviceTime = serviceTime;
     }
 
     // -------------------- Getters -------------------- //
+
+    public int getId() {
+        return id;
+    }
 
     public double getRelativeArrivalTime() {
         return relativeArrivalTime;
@@ -63,6 +71,10 @@ public class Client {
     }
 
     // -------------------- Setters -------------------- //
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public void setRelativeArrivalTime(double relativeArrivalTime) {
         this.relativeArrivalTime = relativeArrivalTime;

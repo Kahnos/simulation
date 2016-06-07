@@ -3,7 +3,6 @@ package simulation;
 import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
-import java.util.Observable;
 
 /**
  * Created by Kahnos - libcorrales.
