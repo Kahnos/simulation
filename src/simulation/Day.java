@@ -16,11 +16,13 @@ public class Day {
     public Day() {
     }
 
+    public Day(Config config){
 
+    }
 
     /**
      * Created by Kahnos - libcorrales.
-     * Contains information about a specific event in a day. Includes type, status of servers, current time and involved client.
+     * Contains information about a specific event in a day. Includes type, status of servers, current waiting line, current time and involved client.
      */
     public class Event {
 
