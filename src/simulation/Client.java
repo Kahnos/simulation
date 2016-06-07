@@ -5,12 +5,12 @@ package simulation;
  * Contains information about a specific client.
  */
 public class Client {
-    private double relativeArrivalTime; // Arrival time assigned by probability.
-    private double realArrivalTime;     // Time the client arrives into the system.
-    private double departureTime;       // Time the client leaves the system.
-    private double serviceTime;         // Service time assigned by probability.
-    private double serveTime;           // Time when a client is served.
-    private double waitTime;            // Total time the client waits in line.
+    private double relativeArrivalTime = -1; // Arrival time assigned by probability.
+    private double realArrivalTime = -1;     // Time the client arrives into the system.
+    private double departureTime = -1;       // Time the client leaves the system.
+    private double serviceTime = -1;         // Service time assigned by probability.
+    private double serveTime = -1;           // Time when a client is served.
+    private double waitTime = -1;            // Total time the client waits in line.
 
     public Client() {
     }
@@ -35,7 +35,7 @@ public class Client {
         this.serviceTime = serviceTime;
     }
 
-    // Getters
+    // -------------------- Getters -------------------- //
 
     public double getRelativeArrivalTime() {
         return relativeArrivalTime;
@@ -61,7 +61,7 @@ public class Client {
         return waitTime;
     }
 
-    // Setters
+    // -------------------- Setters -------------------- //
 
     public void setRelativeArrivalTime(double relativeArrivalTime) {
         this.relativeArrivalTime = relativeArrivalTime;
@@ -87,13 +87,17 @@ public class Client {
         this.waitTime = waitTime;
     }
 
-    // Other functions
+    // -------------------- Other functions -------------------- //
 
-    public void calculateWaitTime(){
-        this.waitTime = departureTime - realArrivalTime - serviceTime;
+    // Calculates the wait time of the client and returns it.
+    public double calculateWaitTime(){
+        waitTime = departureTime - realArrivalTime - serviceTime;
+        return waitTime;
     }
 
-    public void calculateDepartureTime(){
-        this.departureTime = serveTime + serviceTime;
+    // Calculates the departure time of the client and returns it.
+    public double calculateDepartureTime(){
+        departureTime = serveTime + serviceTime;
+        return departureTime;
     }
 }
