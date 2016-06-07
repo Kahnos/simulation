@@ -16,7 +16,7 @@ public class Day {
     public Day() {
     }
 
-    public Day(Config config){
+    public Day(Config config) {
 
     }
 
@@ -26,7 +26,50 @@ public class Day {
      */
     public class Event {
 
+        
 
+        /**
+         * Created by Kahnos - libcorrales.
+         * Contains the current status and client of a server.
+         */
+        public class Server {
+
+            private boolean busy = false;
+            private Client client;
+
+            public Server() {
+            }
+
+            public Server(Client client) {
+                this.client = client;
+            }
+
+            public Server(boolean busy, Client client) {
+                this.busy = busy;
+                this.client = client;
+            }
+
+            // -------------------- Getters -------------------- //
+
+            public boolean isBusy() {
+                return busy;
+            }
+
+            public Client getClient() {
+                return client;
+            }
+
+            // -------------------- Setters -------------------- //
+
+            public void setBusy(boolean busy) {
+                this.busy = busy;
+            }
+
+            public void setClient(Client client) {
+                this.client = client;
+            }
+
+        }
 
     }
 
