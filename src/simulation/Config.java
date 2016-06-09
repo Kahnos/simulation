@@ -10,6 +10,7 @@ import java.util.ArrayList;
  */
 public class Config {
     private int simulationDays = 300;   // Defines the amount of days to simulate.
+    private int openTime = 480;         // Defines the amount of minutes a day the business receives clients.
     private int serverAmount = 1;       // Defines the amount of servers.
     private int maxClients = -1;        // Defines the maximum number of clients in the system. -1 = Infinite.
     private ArrayList<TimeDistribution> arrivalDistribution = new ArrayList<>();    // Contains the distribution of arrival times and probabilities.
@@ -18,16 +19,18 @@ public class Config {
     public Config() {
     }
 
-    public Config(int simulationDays, int serverAmount, int maxClients, ArrayList<TimeDistribution> arrivalDistribution, ArrayList<TimeDistribution> serviceDistribution) {
+    public Config(int simulationDays, int openTime, int serverAmount, int maxClients, ArrayList<TimeDistribution> arrivalDistribution, ArrayList<TimeDistribution> serviceDistribution) {
         this.simulationDays = simulationDays;
+        this.openTime = openTime;
         this.serverAmount = serverAmount;
         this.maxClients = maxClients;
         this.arrivalDistribution = (ArrayList) arrivalDistribution.clone();
         this.serviceDistribution = (ArrayList) serviceDistribution.clone();
     }
 
-    public Config(int simulationDays, int serverAmount, int maxClients, ObservableList<TimeDistribution> arrivalDistribution, ObservableList<TimeDistribution> serviceDistribution) {
+    public Config(int simulationDays, int openTime, int serverAmount, int maxClients, ObservableList<TimeDistribution> arrivalDistribution, ObservableList<TimeDistribution> serviceDistribution) {
         this.simulationDays = simulationDays;
+        this.openTime = openTime;
         this.serverAmount = serverAmount;
         this.maxClients = maxClients;
         this.arrivalDistribution.addAll(arrivalDistribution);
@@ -38,6 +41,10 @@ public class Config {
 
     public int getSimulationDays() {
         return simulationDays;
+    }
+
+    public int getOpenTime() {
+        return openTime;
     }
 
     public int getServerAmount() {
@@ -60,6 +67,10 @@ public class Config {
 
     public void setSimulationDays(int simulationDays) {
         this.simulationDays = simulationDays;
+    }
+
+    public void setOpenTime(int openTime) {
+        this.openTime = openTime;
     }
 
     public void setServerAmount(int serverAmount) {

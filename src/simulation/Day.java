@@ -17,14 +17,20 @@ public class Day {
     }
 
     /**
-     * This constructor creates the Clients assigning the arrival and service times based on a random number.
-     * @param config contains the configuration for the simulation. This constructor uses its TimeDistributions when creating the Clients.
+     * This constructor calls simulate() (which runs the simulation) and passes it the configuration.
+     * @param dayID contains the ID of the day, for example, day 13 of 300.
+     * @param config contains the configuration for the simulation.
      */
-    public Day(Config config) {
-
+    public Day(int dayID, Config config) {
+        this.dayID = dayID;
+        simulate(config);
     }
 
     // -------------------- Getters -------------------- //
+
+    public int getDayID() {
+        return dayID;
+    }
 
     public ArrayList<Event> getEvents() {
         return events;
@@ -36,6 +42,10 @@ public class Day {
 
     // -------------------- Setters -------------------- //
 
+    public void setDayID(int dayID) {
+        this.dayID = dayID;
+    }
+
     public void setEvents(ArrayList<Event> events) {
         this.events = (ArrayList) events.clone();
     }
@@ -46,9 +56,12 @@ public class Day {
 
     // -------------------- Other functions -------------------- //
 
-    // TODO: 08/06/2016 Simulates the day, creating and adding the events following a waiting line simulation algorithm.
-    public Day simulate(){
-        return this;
+    /**
+     * Simulates the day, creating and adding the events following a waiting line simulation algorithm.
+     * @param config contains the configuration for the simulation.
+     */
+    public void simulate(Config config){
+        
     }
 
 }
