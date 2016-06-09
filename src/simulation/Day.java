@@ -4,164 +4,51 @@ import java.util.ArrayList;
 
 /**
  * Created by Kahnos - libcorrales.
- * Contains information about all events, clients, statistics and keeps track of times in a simulation day.
+ * Contains information about all events in a simulation day. Setups and runs the simulation for a day.
+ * Creates the clients based on a random number for arrival and service times.
  */
 public class Day {
 
+    private int dayID = -1;
     private ArrayList<Event> events = new ArrayList<>();
     private ArrayList<Client> clients = new ArrayList<>();
-    private int nextArrivalTime = 0;
-    private int nextDepartureTime = 0;
 
     public Day() {
     }
 
+    /**
+     * This constructor creates the Clients assigning the arrival and service times based on a random number.
+     * @param config contains the configuration for the simulation. This constructor uses its TimeDistributions when creating the Clients.
+     */
     public Day(Config config) {
 
     }
 
+    // -------------------- Getters -------------------- //
 
-    /**
-     * Created by Kahnos - libcorrales.
-     * Contains information about a specific event in a day. Includes type, status of servers, current waiting line, current time and involved client.
-     */
-    public class Event {
+    public ArrayList<Event> getEvents() {
+        return events;
+    }
 
-        private int TM = -1;
-        private String type;
-        private Client client;
-        private ArrayList<Server> servers = new ArrayList<>();
+    public ArrayList<Client> getClients() {
+        return clients;
+    }
 
-        public Event() {
-        }
+    // -------------------- Setters -------------------- //
 
-        public Event(int TM, String type, Client client) {
-            this.TM = TM;
-            this.type = type;
-            this.client = client;
-        }
+    public void setEvents(ArrayList<Event> events) {
+        this.events = (ArrayList) events.clone();
+    }
 
-        public Event(int TM, String type, Client client, int serverAmount) {
-            this.TM = TM;
-            this.type = type;
-            this.client = client;
+    public void setClients(ArrayList<Client> clients) {
+        this.clients = (ArrayList) clients.clone();
+    }
 
-            for (int i = 0; i < serverAmount; i++) {
-                servers.add(new Server(i));
-            }
-        }
+    // -------------------- Other functions -------------------- //
 
-        public Event(int TM, String type, Client client, ArrayList<Server> servers) {
-            this.TM = TM;
-            this.type = type;
-            this.client = client;
-            this.servers = (ArrayList) servers.clone();
-        }
-
-        // -------------------- Getters -------------------- //
-
-        public int getTM() {
-            return TM;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public Client getClient() {
-            return client;
-        }
-
-        public ArrayList<Server> getServers() {
-            return servers;
-        }
-
-        // -------------------- Setters -------------------- //
-
-        public void setTM(int TM) {
-            this.TM = TM;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public void setClient(Client client) {
-            this.client = client;
-        }
-
-        public void setServers(ArrayList<Server> servers) {
-            this.servers = (ArrayList) servers.clone();
-        }
-
-        // -------------------- Other functions -------------------- //
-
-        public void setServer(boolean busy, int index) {
-            servers.get(index).setBusy(busy);
-        }
-
-        public void setServer(Client client, int index) {
-            servers.get(index).setClient(client);
-        }
-
-        /**
-         * Created by Kahnos - libcorrales.
-         * Contains the current status and client of a server.
-         */
-        public class Server {
-
-            int id = -1;
-            private boolean busy = false;
-            private Client client;
-
-            public Server() {
-            }
-
-            public Server(int id) {
-                this.id = id;
-            }
-
-            public Server(int id, Client client) {
-                this.id = id;
-                this.client = client;
-            }
-
-            public Server(int id, boolean busy, Client client) {
-                this.id = id;
-                this.busy = busy;
-                this.client = client;
-            }
-
-            // -------------------- Getters -------------------- //
-
-            public int getId() {
-                return id;
-            }
-
-            public boolean isBusy() {
-                return busy;
-            }
-
-            public Client getClient() {
-                return client;
-            }
-
-            // -------------------- Setters -------------------- //
-
-            public void setId(int id) {
-                this.id = id;
-            }
-
-            public void setBusy(boolean busy) {
-                this.busy = busy;
-            }
-
-            public void setClient(Client client) {
-                this.client = client;
-            }
-
-        }
-
+    // TODO: 08/06/2016 Simulates the day, creating and adding the events following a waiting line simulation algorithm.
+    public Day simulate(){
+        return this;
     }
 
 }
