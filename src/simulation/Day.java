@@ -8,12 +8,23 @@ import java.util.ArrayList;
  */
 public class Day {
 
-    private ArrayList<Event> events = new ArrayList<>();
-    private ArrayList<Client> clients = new ArrayList<>();
+    /*private ArrayList<Event> events = new ArrayList<>();
+    private ArrayList<Client> clients = new ArrayList<>();*/
     private int nextArrivalTime = 0;
     private int nextDepartureTime = 0;
 
-    public Day() {
+    public Day(int at, int dt) {
+        this.nextArrivalTime = at;
+        this.nextDepartureTime = dt;
+
+    }
+
+    public int getNextArrivalTime() {
+        return nextArrivalTime;
+    }
+
+    public int getNextDepartureTime() {
+        return nextDepartureTime;
     }
 
     public Day(Config config){
