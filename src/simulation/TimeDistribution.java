@@ -33,7 +33,7 @@ public class TimeDistribution {
     public TimeDistribution(int time, double probabilityTotal, ArrayList<TimeDistribution> timeDistributions){
         this.time = time;
 
-        if(timeDistributions.isEmpty()){
+        if (timeDistributions.isEmpty()){
             probabilityMin = 0;
             probabilityMax = probabilityTotal - 0.01;
         }
@@ -89,7 +89,7 @@ public class TimeDistribution {
 
     /**
      * Verifies that the summary of time distribution totals in the ArrayList is less than 1 or adds up to 1 exactly.
-     * @param timeDistributions
+     * @param timeDistributions contains the TDs to verify.
      * @return -1 if the summary is < 0 || > 1, 0 if the summary is >= 0 && < 1, 1 if the summary is 1.
      */
     public static int verifyProbabilities(ArrayList<TimeDistribution> timeDistributions){

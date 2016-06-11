@@ -31,7 +31,7 @@ public class Event {
         ;
     }
 
-    public Event(int eventID, String type, Client client, int TM, ArrayList<Server> servers, ArrayList<Client> waitLine, int nextArrivalTime, int nextDepartureTime) {
+    public Event(int eventID, String type, Client client, int TM, int nextArrivalTime, int nextDepartureTime, ArrayList<Server> servers, ArrayList<Client> waitLine) {
         this.eventID = eventID;
         this.type = type;
         this.client = client;
