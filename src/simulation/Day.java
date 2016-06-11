@@ -125,8 +125,13 @@ public class Day {
      * Simulates the day, creating and adding the events following a waiting line simulation algorithm.
      */
     private void simulate(){
+        // Auxiliary variables.
         int eventCounter = 1;
         int clientCounter = 1;
+        int availableServer;
+        Client client;
+        Client newClient;
+        Event event;
 
         // Creating the servers based on the configuration.
         ArrayList<Server> servers = new ArrayList(config.getServerAmount());
@@ -138,45 +143,57 @@ public class Day {
         ArrayList<Client> waitLine = new ArrayList<>();
 
         // Creating the first client.
-        clients.add(createClient(clientCounter, 0));
-        clients.get(0).setRelativeArrivalTime(0);
-        clients.get(0).setAll(0, 0);
+        client = createClient(clientCounter, 0);
+        client.setRelativeArrivalTime(0);
+        client.setAll(0, 0);
+        clients.add(client);
 
         // The first client occupies the first server.
-        servers.get(0).setAll(clients.get(0), true);
+        servers.get(0).setAll(client, true);
 
         // Creating the second client.
-        clients.add(createClient(++clientCounter, 0));
+        newClient = createClient(++clientCounter, 0);
+        clients.add(newClient);
 
-        // Creating the first event, the arrival of the first client.
-        // Event parameters: int eventID, String type, Client client, int TM, int nextArrivalTime, int nextDepartureTime, ArrayList<Server> servers, ArrayList<Client> waitLine
-        events.add(new Event(eventCounter, "Llegada", clients.get(0),
-                0, clients.get(1).getRealArrivalTime(), clients.get(0).getDepartureTime(), servers));
+        /* Creating the first event, the arrival of the first client.
+        Event parameters: int eventID, String type, Client client,
+        int TM, int nextArrivalTime, int nextDepartureTime, ArrayList<Server> servers, ArrayList<Client> waitLine*/
+        events.add(new Event(eventCounter, "Llegada", client,
+                0, newClient.getRealArrivalTime(), client.getDepartureTime(), servers));
 
         // Enter the cycle.
         while (true){
-            if (events.get(eventCounter).getNextArrivalTime() < events.get(eventCounter).getNextDepartureTime()) {
+            event = events.get(eventCounter);
+            client = clients.get(clientCounter);
+            if (event.getNextArrivalTime() < event.getNextDepartureTime()) {
                 // Next event is an arrival.
                 // Check max clients and create a new client if possible.
                 if ((config.getMaxClients() == -1)
-                        || (checkCurrentClients(events.get(eventCounter).getTM()) < config.getMaxClients())) {
-                    // Creating a new client.
-                    clients.add(createClient(++clientCounter, events.get(eventCounter).getNextArrivalTime()));
-
-                    // TODO: 11/06/2016 CHECK SERVERS AND WAIT LINE
+                        || (checkCurrentClients(event.getTM()) < config.getMaxClients())) {
                     // Checking availability of servers. If available, set the arriving client, else the client waits.
-                    if (checkServers(servers) != -1) {
-                        
+                    availableServer = checkServers(servers);
+                    if (availableServer != -1) {
+                        // A server is available.
+                        servers.get(availableServer).setAll(client, true);
+                        client.setAll(client.getRealArrivalTime());
+                    }
+                    else {
+                        // No server is available, add client to wait line.
+                        waitLine.add(client);
                     }
 
+                    // Creating a new client.
+                    newClient = createClient(++clientCounter, event.getNextArrivalTime());
+                    clients.add(newClient);
+
                     // Creating a new arrival event.
-                    events.add(new Event(++eventCounter, "Llegada", clients.get(clientCounter - 1),
-                            clients.get(clientCounter - 1).getRealArrivalTime(), clients.get(clientCounter).getRealArrivalTime(),
-                            events.get(eventCounter - 1).getNextDepartureTime(), servers, waitLine));
+                    events.add(new Event(++eventCounter, "Llegada", client,
+                            client.getRealArrivalTime(), newClient.getRealArrivalTime(),
+                            event.getNextDepartureTime(), servers, waitLine));
                 }
                 else {
                     // A new client is not possible, maximum reached.
-
+                    
                 }
             }
             else {

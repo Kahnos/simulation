@@ -100,6 +100,13 @@ public class Client {
         this.waitTime = waitTime;
     }
 
+    // -------------------- Other functions -------------------- //
+
+    /**
+     * Sets realArrivalTime, servedTime, departureTime and waitTime.
+     * @param realArrivalTime contains the real arrival time.
+     * @param servedTime contains the time the client is served.
+     */
     public void setAll(int realArrivalTime, int servedTime) {
         this.realArrivalTime = realArrivalTime;
         this.servedTime = servedTime;
@@ -107,7 +114,10 @@ public class Client {
         calculateWaitTime();
     }
 
-    // -------------------- Other functions -------------------- //
+    public void setAll(int servedTime) {
+        calculateDepartureTime(servedTime);
+        calculateWaitTime();
+    }
 
     /**
      * Sets the served time and calculates the departure time of the client and returns it. Requires servedTime.
