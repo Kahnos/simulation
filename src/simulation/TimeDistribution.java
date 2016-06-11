@@ -45,8 +45,8 @@ public class TimeDistribution {
             probabilityCounter -= 0.01;
             probabilityMin = probabilityCounter;
             probabilityMax = probabilityCounter + probabilityTotal;
-            this.probabilityTotal = probabilityTotal;
         }
+        this.probabilityTotal = probabilityTotal;
     }
 
     // -------------------- Getters -------------------- //

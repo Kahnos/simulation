@@ -56,4 +56,9 @@ public class Server {
         this.client = client;
     }
 
+    public void setAll(Client client, boolean busy){
+        this.client = client;
+        this.busy = busy;
+    }
+
 }

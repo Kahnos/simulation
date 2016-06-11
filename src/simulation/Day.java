@@ -61,9 +61,11 @@ public class Day {
 
     /**
      * Creates a new client, assigning the arrival and service times based on random probability.
+     * @param id contains the ID of the client.
+     * @param TM contains the current TM.
      * @return the created client.
      */
-    private Client createClient(int id){
+    private Client createClient(int id, int TM){
         double randomNumber = Math.random();
         int arrivalTime = -1;
         int serviceTime = -1;
@@ -80,33 +82,108 @@ public class Day {
                 serviceTime = SD.getTime();
             }
 
-        return new Client(id, arrivalTime, serviceTime);
+        return new Client(id, arrivalTime, TM + arrivalTime, serviceTime);
+    }
+
+    /**
+     * Counts the number of clients currently in the system and returns it.
+     * @param TM contains the current TM.
+     * @return the current number of clients in the system.
+     */
+    private int checkCurrentClients(int TM){
+        int clientCounter = 0;
+
+        // Count the clients inside the system.
+        for (Client client : clients) {
+            if ((client.getRealArrivalTime() >= TM)
+                    && ((client.getDepartureTime() < TM) || (client.getDepartureTime() == -1))) {
+                clientCounter++;
+            }
+        }
+
+        // Add 1 because the next arrival has not been accounted.
+        return clientCounter + 1;
+    }
+
+    /**
+     * Checks the servers availability and returns the index of a free server, if there is one, or -1 if there is not.
+     * @param servers contains the servers to check.
+     */
+    private int checkServers(ArrayList<Server> servers){
+        int availableServer = -1;
+
+        for (Server server : servers) {
+            if (!server.isBusy()) {
+                availableServer = server.getId();
+            }
+        }
+
+        return availableServer;
     }
 
     /**
      * Simulates the day, creating and adding the events following a waiting line simulation algorithm.
      */
     private void simulate(){
+        int eventCounter = 1;
+        int clientCounter = 1;
+
         // Creating the servers based on the configuration.
-        ArrayList servers = new ArrayList(config.getServerAmount());
+        ArrayList<Server> servers = new ArrayList(config.getServerAmount());
         for (int i = 0; i < config.getServerAmount(); i++) {
             servers.add(new Server(i));
         }
 
+        // Creating the wait line.
+        ArrayList<Client> waitLine = new ArrayList<>();
+
         // Creating the first client.
-        clients.add(createClient(1));
+        clients.add(createClient(clientCounter, 0));
         clients.get(0).setRelativeArrivalTime(0);
-        clients.get(0).setRealArrivalTime(0);
-        clients.get(0).setServedTime(0);
-        clients.get(0).calculateDepartureTime();
-        clients.get(0).calculateWaitTime();
+        clients.get(0).setAll(0, 0);
+
+        // The first client occupies the first server.
+        servers.get(0).setAll(clients.get(0), true);
 
         // Creating the second client.
-        clients.add(createClient(2));
-        clients.get(1).setRealArrivalTime(clients.get(1).getRelativeArrivalTime());
+        clients.add(createClient(++clientCounter, 0));
 
         // Creating the first event, the arrival of the first client.
-        events.add(new Event(1, "Llegada", clients.get(0), 0, clients.get(1).getRealArrivalTime(), clients.get(0).get ));
+        // Event parameters: int eventID, String type, Client client, int TM, int nextArrivalTime, int nextDepartureTime, ArrayList<Server> servers, ArrayList<Client> waitLine
+        events.add(new Event(eventCounter, "Llegada", clients.get(0),
+                0, clients.get(1).getRealArrivalTime(), clients.get(0).getDepartureTime(), servers));
+
+        // Enter the cycle.
+        while (true){
+            if (events.get(eventCounter).getNextArrivalTime() < events.get(eventCounter).getNextDepartureTime()) {
+                // Next event is an arrival.
+                // Check max clients and create a new client if possible.
+                if ((config.getMaxClients() == -1)
+                        || (checkCurrentClients(events.get(eventCounter).getTM()) < config.getMaxClients())) {
+                    // Creating a new client.
+                    clients.add(createClient(++clientCounter, events.get(eventCounter).getNextArrivalTime()));
+
+                    // TODO: 11/06/2016 CHECK SERVERS AND WAIT LINE
+                    // Checking availability of servers. If available, set the arriving client, else the client waits.
+                    if (checkServers(servers) != -1) {
+                        
+                    }
+
+                    // Creating a new arrival event.
+                    events.add(new Event(++eventCounter, "Llegada", clients.get(clientCounter - 1),
+                            clients.get(clientCounter - 1).getRealArrivalTime(), clients.get(clientCounter).getRealArrivalTime(),
+                            events.get(eventCounter - 1).getNextDepartureTime(), servers, waitLine));
+                }
+                else {
+                    // A new client is not possible, maximum reached.
+
+                }
+            }
+            else {
+                // Next event is a departure.
+
+            }
+        }
     }
 
 }

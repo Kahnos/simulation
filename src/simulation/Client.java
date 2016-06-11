@@ -100,24 +100,46 @@ public class Client {
         this.waitTime = waitTime;
     }
 
+    public void setAll(int realArrivalTime, int servedTime) {
+        this.realArrivalTime = realArrivalTime;
+        this.servedTime = servedTime;
+        calculateDepartureTime();
+        calculateWaitTime();
+    }
+
     // -------------------- Other functions -------------------- //
 
     /**
-     * Calculates the wait time of the client and returns it. Requires realArrivalTime.
+     * Sets the served time and calculates the departure time of the client and returns it. Requires servedTime.
+     * @param servedTime contains the time the client is served.
+     * @return the calculated departure time of the Client.
+     */
+    public int calculateDepartureTime(int servedTime) {
+        this.servedTime = servedTime;
+        departureTime = servedTime + serviceTime;
+        return departureTime;
+    }
+
+    public int calculateDepartureTime() {
+        departureTime = servedTime + serviceTime;
+        return departureTime;
+    }
+
+    /**
+     * Sets the departure time and calculates the wait time of the client and returns it. Requires realArrivalTime.
+     * @param departureTime contains the time of departure of the client.
      * @return the calculated waitTime of the Client.
      */
+    public int calculateWaitTime(int departureTime) {
+        this.departureTime = departureTime;
+        waitTime = departureTime - realArrivalTime - serviceTime;
+        return waitTime;
+    }
+
     public int calculateWaitTime(){
         waitTime = departureTime - realArrivalTime - serviceTime;
         return waitTime;
     }
 
-    /**
-     * Calculates the departure time of the client and returns it. Requires servedTime.
-     * @return the calculated departure time of the Client.
-     */
-    public int calculateDepartureTime(){
-        departureTime = servedTime + serviceTime;
-        return departureTime;
-    }
 
 }
