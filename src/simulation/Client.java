@@ -102,13 +102,19 @@ public class Client {
 
     // -------------------- Other functions -------------------- //
 
-    // Calculates the wait time of the client and returns it.
+    /**
+     * Calculates the wait time of the client and returns it.
+     * @return the calculated waitTime of the Client.
+     */
     public double calculateWaitTime(){
         waitTime = departureTime - realArrivalTime - serviceTime;
         return waitTime;
     }
 
-    // Calculates the departure time of the client and returns it.
+    /**
+     * Calculates the departure time of the client and returns it.
+     * @return the calculated departure time of the Client.
+     */
     public double calculateDepartureTime(){
         departureTime = servedTime + serviceTime;
         return departureTime;

@@ -8,6 +8,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -26,6 +27,8 @@ public class ConfigurationController implements Initializable {
     @FXML TableColumn<Day, Integer> probColumn;
     @FXML TextField serversField;
     @FXML Button simulationButton;
+
+    @FXML FileChooser fileChooser = new FileChooser();
 
     Day day = new Day(2,3);
 
