@@ -1,6 +1,5 @@
 package simulation;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -14,20 +13,6 @@ public class Day {
     private Config config;
     private ArrayList<Event> events = new ArrayList<>();
     private ArrayList<Client> clients = new ArrayList<>();
-
-    public Day(int at, int dt) {
-        this.nextArrivalTime = at;
-        this.nextDepartureTime = dt;
-
-    }
-
-    public int getNextArrivalTime() {
-        return nextArrivalTime;
-    }
-
-    public int getNextDepartureTime() {
-        return nextDepartureTime;
-    }
 
     /**
      * This constructor calls simulate(), which runs the simulation.
@@ -101,16 +86,14 @@ public class Day {
      * @param TM contains the current TM.
      * @return the current number of clients in the system.
      */
-    private int checkCurrentClients(int TM){
+    private int countCurrentClients(int TM){
         int clientCounter = 0;
 
         // Count the clients inside the system.
-        for (Client client : clients) {
+        for (Client client : clients)
             if ((client.getRealArrivalTime() >= TM)
-                    && ((client.getDepartureTime() < TM) || (client.getDepartureTime() == -1))) {
+                    && ((client.getDepartureTime() < TM) || (client.getDepartureTime() == -1)))
                 clientCounter++;
-            }
-        }
 
         // Add 1 because the next arrival has not been accounted.
         return clientCounter + 1;
@@ -120,16 +103,50 @@ public class Day {
      * Checks the servers availability and returns the index of a free server, if there is one, or -1 if there is not.
      * @param servers contains the servers to check.
      */
-    private int checkServers(ArrayList<Server> servers){
+    private int getAvailableServer(ArrayList<Server> servers){
         int availableServer = -1;
 
-        for (Server server : servers) {
-            if (!server.isBusy()) {
+        for (Server server : servers)
+            if (!server.isBusy())
                 availableServer = server.getId();
-            }
-        }
 
         return availableServer;
+    }
+
+    /**
+     * Checks the occupied servers and returns the ID of the server of the departing client.
+     * @param servers contains all the servers.
+     * @param TM contains the current TM.
+     * @return the ID of the server that contains the departing client.
+     */
+    private int findDepartingClient(ArrayList<Server> servers, int TM) {
+        int serverID = -1;
+
+        for (Server server : servers)
+            if (server.isBusy())
+                if (server.getClient().getDepartureTime() == TM)
+                    serverID = server.getId();
+
+        return serverID;
+    }
+
+    /**
+     * Checks the occupied servers and returns the ID of the server of the next departing client.
+     * @param servers contains all the servers.
+     * @return the ID of the server that contains the next departing client.
+     */
+    private int findNextDepartingClient(ArrayList<Server> servers) {
+        int serverID = -1;
+        int minAux = 99999;
+
+        for (Server server : servers)
+            if (server.isBusy())
+                if (server.getClient().getDepartureTime() < minAux) {
+                    minAux = server.getClient().getDepartureTime();
+                    serverID = server.getId();
+                }
+
+        return serverID;
     }
 
     /**
@@ -175,13 +192,14 @@ public class Day {
         // Enter the cycle.
         while (true){
             event = events.get(eventCounter);
-            client = clients.get(clientCounter);
 
             // Comparing next arrival time to next departure time. The lesser will be the next event.
             if (event.getNextArrivalTime() < event.getNextDepartureTime()) {
-                // Next event is an arrival.
+                // Next event is an arrival. Getting the next arriving client.
+                client = clients.get(clientCounter);
+
                 // Checking availability of servers. If available, set the arriving client, else the client waits.
-                availableServer = checkServers(servers);
+                availableServer = getAvailableServer(servers);
                 if (availableServer != -1) {
                     // A server is available.
                     servers.get(availableServer).setAll(client, true);
@@ -194,7 +212,7 @@ public class Day {
 
                 // Check max clients to see if a new client is possible.
                 if ((config.getMaxClients() == -1)
-                        || (checkCurrentClients(event.getTM()) < config.getMaxClients())) {
+                        || (countCurrentClients(event.getTM()) < config.getMaxClients())) {
                     // A new client is possible. Creating a new client.
                     newClient = createClient(++clientCounter, event.getNextArrivalTime());
                     clients.add(newClient);
@@ -208,13 +226,21 @@ public class Day {
                     // A new client is not possible, maximum reached.
                     // Creating a new arrival event with next arrival time of 99999, so next event is a departure.
                     events.add(new Event(++eventCounter, "Llegada", client,
-                            client.getRealArrivalTime(), newClient.getRealArrivalTime(),
+                            client.getRealArrivalTime(), 99999,
                             event.getNextDepartureTime(), servers, waitLine));
                 }
             }
             else {
-                // Next event is a departure.
+                // Next event is a departure. Getting the next departing client.
+                client = servers.get(findDepartingClient(servers, event.getTM())).getClient();
 
+                // Checking if the waiting line is empty or not.
+                if (waitLine.isEmpty()) {
+
+                }
+                else {
+
+                }
             }
         }
     }
