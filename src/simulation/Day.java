@@ -15,7 +15,18 @@ public class Day {
     private ArrayList<Event> events = new ArrayList<>();
     private ArrayList<Client> clients = new ArrayList<>();
 
-    public Day() {
+    public Day(int at, int dt) {
+        this.nextArrivalTime = at;
+        this.nextDepartureTime = dt;
+
+    }
+
+    public int getNextArrivalTime() {
+        return nextArrivalTime;
+    }
+
+    public int getNextDepartureTime() {
+        return nextDepartureTime;
     }
 
     /**
