@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
@@ -20,23 +21,46 @@
             <TextField fx:id="clientsLabel" />
          </children>
       </HBox>
-      <HBox prefHeight="100.0" prefWidth="200.0">
+      <HBox>
          <children>
             <Label text="Label" />
             <TextField />
          </children>
       </HBox>
-      <HBox spacing="100.0">
+      <HBox spacing="90.0">
          <children>
             <VBox prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <Label minHeight="-Infinity" minWidth="-Infinity" text="Tiempo entre llegadas" />
-                  <TableView fx:id="arrivalTable" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="200.0">
+                  <Label minHeight="-Infinity" minWidth="-Infinity" text="Tiempo entre llegadas">
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin></Label>
+                  <TableView fx:id="arrivalTable" editable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="171.0">
                     <columns>
                       <TableColumn fx:id="timeColumn" prefWidth="75.0" text="Tiempo" />
-                      <TableColumn fx:id="probColumn" prefWidth="87.0" text="Probabilidad" />
+                      <TableColumn fx:id="probColumn" prefWidth="95.0" text="Probabilidad" />
                     </columns>
                   </TableView>
+                  <VBox prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                           <children>
+                              <TextField fx:id="arrivalTimeField" promptText="Tiempo" />
+                              <TextField fx:id="arrivalProbField" promptText="Probabilidad" />
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="5.0" top="5.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                           <children>
+                              <Button fx:id="deleteButtonArrival" mnemonicParsing="false" onAction="#deleteButtonClickedArrival" prefHeight="25.0" prefWidth="150.0" text="Eliminar" />
+                              <Button fx:id="addButtonArrival" mnemonicParsing="false" onAction="#addButtonClickedArrival" prefHeight="25.0" prefWidth="150.0" text="Añadir" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0" />
                </children>
             </VBox>
             <VBox prefHeight="200.0" prefWidth="100.0">
@@ -52,7 +76,7 @@
             </VBox>
          </children>
       </HBox>
-      <Button fx:id="simulationButton" mnemonicParsing="false" text="Button" />
+      <Button fx:id="simulationButton" mnemonicParsing="false" onAction="#simulationButtonClicked" text="Button" />
    </children>
    <padding>
       <Insets left="20.0" top="20.0" />

@@ -12,21 +12,7 @@ public class Day {
     private int dayID = -1;
     private ArrayList<Event> events = new ArrayList<>();
     private ArrayList<Client> clients = new ArrayList<>();
-
-    public Day(int at, int dt) {
-        this.nextArrivalTime = at;
-        this.nextDepartureTime = dt;
-
-    }
-
-    public int getNextArrivalTime() {
-        return nextArrivalTime;
-    }
-
-    public int getNextDepartureTime() {
-        return nextDepartureTime;
-    }
-
+    
     /**
      * This constructor calls simulate() (which runs the simulation) and passes it the configuration.
      * @param dayID contains the ID of the day, for example, day 13 of 300.
