@@ -240,36 +240,43 @@ public class Day {
                 Next event is a departure.
                 Getting the transitioning server ID (This server contains the departing client).
                 */
-                serverID = findDepartingClient(servers, event.getTM());
+                serverID = findDepartingClient(servers, event.getNextDepartureTime());
 
                 // Getting the departing client and releasing the server.
                 client = servers.get(serverID).getClient();
                 servers.get(serverID).clearAll();
 // TODO: 11-06-2016  CHECK FOR 99999 AND CORRECT ARRIVAL TIME
-                // Checking if the waiting line is empty or not.
-                if (waitLine.isEmpty()) {
-                    // Check if the servers are empty.
-                    if (findNextDepartingClient(servers) != -1){
-                        // Getting the next departing client.
-                        nextClient = servers.get(findNextDepartingClient(servers)).getClient();
 
-                        // Creating a departure event with the next client's departure time.
-                        events.add(new Event(++eventCounter, "Salida", client,
-                                client.getDepartureTime(), event.getNextArrivalTime(),
-                                nextClient.getDepartureTime(), servers, waitLine));
-                    }
-                    else{
-                        /*
-                        There isn't a next departing client.
-                        Creating a departure event with next departure time of 99999, so next event is an arrival.
-                        */
-                        events.add(new Event(++eventCounter, "Salida", client,
-                                client.getDepartureTime(), event.getNextArrivalTime(),
-                                99999, servers, waitLine));
-                    }
+                // Checking if the waiting line and the servers are empty.
+                if ((waitLine.isEmpty())
+                        && (findNextDepartingClient(servers) == -1)) {
+                    /*
+                    There isn't a next departing client.
+                    Creating a departure event with next departure time of 99999, so next event is an arrival.
+                    */
+                    events.add(new Event(++eventCounter, "Salida", client,
+                            client.getDepartureTime(), event.getNextArrivalTime(),
+                            99999, servers, waitLine));
                 }
                 else {
+                    if (!waitLine.isEmpty()) {
+                        /*
+                        The waiting line isn't empty.
+                        Setting the next client on the waiting line to the server.
+                        */
+                        servers.get(serverID).setAll(waitLine.get(0), true);
 
+                        // Updating the client's attributes and the waiting line.
+                        clients.get(waitLine.get(0).getId()).setAll(event.getNextDepartureTime());
+                        waitLine.remove(0);
+                    }
+                    // Getting the next departing client.
+                    nextClient = servers.get(findNextDepartingClient(servers)).getClient();
+
+                    // Creating a departure event with the next client's departure time.
+                    events.add(new Event(++eventCounter, "Salida", client,
+                            client.getDepartureTime(), event.getNextArrivalTime(),
+                            nextClient.getDepartureTime(), servers, waitLine));
                 }
             }
         }
