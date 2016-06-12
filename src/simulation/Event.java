@@ -130,4 +130,22 @@ public class Event {
         servers.get(index).setClient(client);
     }
 
+    @Override
+    public String toString() {
+        StringBuilder string = new StringBuilder();
+
+        string.append(String.format("%5d%15s%10d%5d",eventID,type,client.getId(),TM));
+
+        for (Server server : servers) {
+            if (server.isBusy())
+                string.append(String.format("%5d", 1));
+            else
+                string.append(String.format("%5d", 0));
+        }
+
+        string.append(String.format("%10d%5d%5d\n",waitLine.size(),nextArrivalTime, nextDepartureTime));
+
+        return string.toString();
+    }
+
 }

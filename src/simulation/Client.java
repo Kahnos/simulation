@@ -152,5 +152,19 @@ public class Client {
         return waitTime;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder string = new StringBuilder();
+
+        string.append("ID: ").append(id).append(" - ");
+        string.append("relativeArrival: ").append(relativeArrivalTime).append(" - ");
+        string.append("realArrival: ").append(realArrivalTime).append(" - ");
+        string.append("service: ").append(serviceTime).append(" - ");
+        string.append("served: ").append(servedTime).append(" - ");
+        string.append("departure: ").append(departureTime).append(" - ");
+        string.append("wait: ").append(waitTime).append("\n");
+
+        return string.toString();
+    }
 
 }

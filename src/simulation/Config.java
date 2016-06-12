@@ -2,6 +2,8 @@ package simulation;
 
 import javafx.collections.ObservableList;
 
+import javax.smartcardio.ATR;
+import java.sql.Time;
 import java.util.ArrayList;
 
 /**
@@ -97,6 +99,37 @@ public class Config {
     public void setServiceDistribution(ObservableList<TimeDistribution> serviceDistribution) {
         this.serviceDistribution.clear();
         this.serviceDistribution.addAll(serviceDistribution);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder string = new StringBuilder();
+
+        string.append("simulationDays: ").append(simulationDays).append(" - ");
+        string.append("openTime: ").append(openTime).append(" - ");
+        string.append("serverAmount: ").append(serverAmount).append(" - ");
+        string.append("maxClients: ").append(maxClients);
+        string.append("\n\n");
+
+        // Printing arrival distributions.
+        string.append("Arrival distribution: \n");
+        string.append(String.format("%5s%5s%5s","Time","Min","Max"));
+        string.append("===============");
+        for (TimeDistribution AT : arrivalDistribution) {
+            string.append(String.format("%5d%5.2f%5.2f", AT.getTime(), AT.getProbabilityMin(), AT.getProbabilityMax()));
+        }
+        string.append("\n\n");
+
+        // Printing service distributions.
+        string.append("Service distribution: \n");
+        string.append(String.format("%5s%5s%5s","Time","Min","Max"));
+        string.append("===============");
+        for (TimeDistribution ST : serviceDistribution) {
+            string.append(String.format("%5d%5.2f%5.2f", ST.getTime(), ST.getProbabilityMin(), ST.getProbabilityMax()));
+        }
+        string.append("\n\n");
+
+        return string.toString();
     }
 
 }

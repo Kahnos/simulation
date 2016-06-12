@@ -30,7 +30,7 @@ public class ConfigurationController implements Initializable {
 
     @FXML FileChooser fileChooser = new FileChooser();
 
-    Day day = new Day(2,3);
+    //Day day = new Day(2,3);
 
 
     @Override
@@ -48,7 +48,7 @@ public class ConfigurationController implements Initializable {
 
     public ObservableList<Day> getData(){
         ObservableList<Day> list = FXCollections.observableArrayList();
-        list.add(day);
+        //list.add(day);
         return list;
     }
 
