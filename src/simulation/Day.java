@@ -61,7 +61,7 @@ public class Day {
      * @param TM contains the current TM.
      * @return the created client.
      */
-    private Client createClient(int id, int TM){
+    private Client createClient(int id, int TM) {
         double randomNumber = Math.random();
         int arrivalTime = -1;
         int serviceTime = -1;
@@ -86,7 +86,7 @@ public class Day {
      * @param TM contains the current TM.
      * @return the current number of clients in the system.
      */
-    private int countCurrentClients(int TM){
+    private int countCurrentClients(int TM) {
         int clientCounter = 0;
 
         // Count the clients inside the system.
@@ -103,7 +103,7 @@ public class Day {
      * Checks the servers availability and returns the index of a free server, if there is one, or -1 if there is not.
      * @param servers contains the servers to check.
      */
-    private int getAvailableServer(ArrayList<Server> servers){
+    private int getAvailableServer(ArrayList<Server> servers) {
         int availableServer = -1;
 
         for (Server server : servers)
@@ -158,8 +158,10 @@ public class Day {
         int clientCounter = 1;  // Keeps track of the clients.
         int serverID;           // ID of available server on arrival events or transitioning server on departure events.
         Client client;          // Client related to the current event (Both arrivals and departures).
-        Client nextClient;      // New client on arrival events and next departing client on departure events.
+        Client newClient;       // New client on arrival events.
+        Client nextClient;      // Next departing client on departure events.
         Event event;            // Current event.
+        boolean openBusiness = true;    // Determines if the business is open and receiving clients.
 
         // Creating the servers based on the configuration.
         ArrayList<Server> servers = new ArrayList(config.getServerAmount());
@@ -180,21 +182,21 @@ public class Day {
         servers.get(0).setAll(client, true);
 
         // Creating the second client.
-        nextClient = createClient(++clientCounter, 0);
-        clients.add(nextClient);
+        newClient = createClient(++clientCounter, 0);
+        clients.add(newClient);
 
-        /*
-        Creating the first event, the arrival of the first client.
-        Event parameters: int eventID, String type, Client client,
-        int TM, int nextArrivalTime, int nextDepartureTime, ArrayList<Server> servers, ArrayList<Client> waitLine
-        */
+        // Creating the first event, the arrival of the first client.
         events.add(new Event(eventCounter, "Llegada", client,
-                0, nextClient.getRealArrivalTime(), client.getDepartureTime(), servers));
+                0, newClient.getRealArrivalTime(), client.getDepartureTime(), servers));
 
         // Enter the Matrix.
-        while (true){
+        while (true) {
             // Current event.
             event = events.get(eventCounter);
+
+            // If the business is closed and no clients remain inside, break the cycle.
+            if ((!openBusiness) && (event.getNextDepartureTime() == 99999))
+                break;
 
             // Comparing next arrival time to next departure time. The lesser will be the next event.
             if (event.getNextArrivalTime() < event.getNextDepartureTime()) {
@@ -212,22 +214,47 @@ public class Day {
                     // No server is available, add client to wait line.
                     waitLine.add(client);
                 }
-// TODO: 11-06-2016  CHECK FOR 99999 AND CORRECT DEPARTURE TIME
-                // Check max clients to see if a new client is possible.
-                if ((config.getMaxClients() == -1)
-                        || (countCurrentClients(event.getTM()) < config.getMaxClients())) {
-                    // A new client is possible. Creating a new client.
-                    nextClient = createClient(++clientCounter, event.getNextArrivalTime());
-                    clients.add(nextClient);
 
-                    // Creating an arrival event with the next client's arrival time.
-                    events.add(new Event(++eventCounter, "Llegada", client,
-                            client.getRealArrivalTime(), nextClient.getRealArrivalTime(),
-                            event.getNextDepartureTime(), servers, waitLine));
+                // Check if business is open and maximum clients hasn't been reached.
+                if ((openBusiness) &&
+                        ((config.getMaxClients() == -1) ||
+                        (countCurrentClients(event.getTM()) < config.getMaxClients()))) {
+                    // A new client is possible. Creating a new client.
+                    newClient = createClient(++clientCounter, event.getNextArrivalTime());
+                    clients.add(newClient);
+
+                    // Checking if client arrives before closing time.
+                    if ((newClient.getRealArrivalTime() <= config.getOpenTime())) {
+                        /*
+                        The business is still open and the client arrives before closing time.
+                        Check if the system was previously empty.
+                        */
+                        if (event.getNextDepartureTime() != 99999) {
+                            // Creating an arrival event with the new client's arrival time.
+                            events.add(new Event(++eventCounter, "Llegada", client,
+                                    client.getRealArrivalTime(), newClient.getRealArrivalTime(),
+                                    event.getNextDepartureTime(), servers, waitLine));
+                        }
+                        else {
+                            /*
+                            System was previously empty.
+                            Creating an arrival event with the new client's arrival time and current client's departure time.
+                            */
+                            events.add(new Event(++eventCounter, "Llegada", client,
+                                    client.getRealArrivalTime(), newClient.getRealArrivalTime(),
+                                    client.getDepartureTime(), servers, waitLine));
+                        }
+                    }
+                    else {
+                        // The client arrives after closing time. Rollback changes and close business.
+                        clients.remove(clientCounter);
+                        --clientCounter;
+                        openBusiness = false;
+                    }
                 }
                 else {
                     /*
-                    A new client is not possible, maximum reached.
+                    A new client is not possible, maximum reached or business is closed.
                     Creating an arrival event with next arrival time of 99999, so next event is a departure.
                     */
                     events.add(new Event(++eventCounter, "Llegada", client,
@@ -245,13 +272,12 @@ public class Day {
                 // Getting the departing client and releasing the server.
                 client = servers.get(serverID).getClient();
                 servers.get(serverID).clearAll();
-// TODO: 11-06-2016  CHECK FOR 99999 AND CORRECT ARRIVAL TIME
 
                 // Checking if the waiting line and the servers are empty.
                 if ((waitLine.isEmpty())
                         && (findNextDepartingClient(servers) == -1)) {
                     /*
-                    There isn't a next departing client.
+                    The system is empty.
                     Creating a departure event with next departure time of 99999, so next event is an arrival.
                     */
                     events.add(new Event(++eventCounter, "Salida", client,
@@ -273,10 +299,39 @@ public class Day {
                     // Getting the next departing client.
                     nextClient = servers.get(findNextDepartingClient(servers)).getClient();
 
-                    // Creating a departure event with the next client's departure time.
-                    events.add(new Event(++eventCounter, "Salida", client,
-                            client.getDepartureTime(), event.getNextArrivalTime(),
-                            nextClient.getDepartureTime(), servers, waitLine));
+                    // Check if the system wasn't previously full.
+                    if (event.getNextArrivalTime() != 99999) {
+                        // Creating a departure event with the next client's departure time.
+                        events.add(new Event(++eventCounter, "Salida", client,
+                                client.getDepartureTime(), event.getNextArrivalTime(),
+                                nextClient.getDepartureTime(), servers, waitLine));
+                    }
+                    else {
+                        /*
+                        System was previously full.
+                        Creating a new client to set the next arrival time.
+                        */
+                        newClient = createClient(++clientCounter, event.getNextDepartureTime());
+                        clients.add(newClient);
+
+                        // Checking if client arrives before closing time.
+                        if ((openBusiness) &&
+                                (newClient.getRealArrivalTime() <= config.getOpenTime())) {
+                            /*
+                            The business is still open and the client arrives before closing time.
+                            Creating a departure event with the next client's departure time and the new client's arrival time.
+                            */
+                            events.add(new Event(++eventCounter, "Salida", client,
+                                    client.getDepartureTime(), newClient.getRealArrivalTime(),
+                                    nextClient.getDepartureTime(), servers, waitLine));
+                        }
+                        else {
+                            // The client arrives after closing time. Rollback changes and close business.
+                            clients.remove(clientCounter);
+                            --clientCounter;
+                            openBusiness = false;
+                        }
+                    }
                 }
             }
         }
