@@ -9,10 +9,11 @@ public class Client {
     private int id = -1;
     private int relativeArrivalTime = -1; // Arrival time assigned by probability.
     private int realArrivalTime = -1;     // Time the client arrives into the system.
-    private int departureTime = -1;       // Time the client leaves the system.
     private int serviceTime = -1;         // Service time assigned by probability.
     private int servedTime = -1;          // Time when a client is served.
+    private int departureTime = -1;       // Time the client leaves the system.
     private int waitTime = -1;            // Total time the client waits in line.
+
 
     public Client() {
     }

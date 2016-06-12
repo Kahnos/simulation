@@ -9,8 +9,8 @@ import java.util.ArrayList;
 public class Event {
 
     private int eventID = -1;
-    private String type;
-    private Client client;
+    private String type = "";
+    private Client client = null;
     private int TM = -1;
     private ArrayList<Server> servers = new ArrayList<>();
     private ArrayList<Client> waitLine = new ArrayList<>();

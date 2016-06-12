@@ -133,7 +133,7 @@ public class Day {
     /**
      * Checks the occupied servers and returns the ID of the server of the next departing client.
      * @param servers contains all the servers.
-     * @return the ID of the server that contains the next departing client.
+     * @return the ID of the server that contains the next departing client or -1 if there is none.
      */
     private int findNextDepartingClient(ArrayList<Server> servers) {
         int serverID = -1;
@@ -154,12 +154,12 @@ public class Day {
      */
     private void simulate(){
         // Auxiliary variables.
-        int eventCounter = 1;
-        int clientCounter = 1;
-        int availableServer;
-        Client client;
-        Client newClient;
-        Event event;
+        int eventCounter = 1;   // Keeps track of the events.
+        int clientCounter = 1;  // Keeps track of the clients.
+        int serverID;           // ID of available server on arrival events or transitioning server on departure events.
+        Client client;          // Client related to the current event (Both arrivals and departures).
+        Client nextClient;      // New client on arrival events and next departing client on departure events.
+        Event event;            // Current event.
 
         // Creating the servers based on the configuration.
         ArrayList<Server> servers = new ArrayList(config.getServerAmount());
@@ -180,17 +180,20 @@ public class Day {
         servers.get(0).setAll(client, true);
 
         // Creating the second client.
-        newClient = createClient(++clientCounter, 0);
-        clients.add(newClient);
+        nextClient = createClient(++clientCounter, 0);
+        clients.add(nextClient);
 
-        /* Creating the first event, the arrival of the first client.
+        /*
+        Creating the first event, the arrival of the first client.
         Event parameters: int eventID, String type, Client client,
-        int TM, int nextArrivalTime, int nextDepartureTime, ArrayList<Server> servers, ArrayList<Client> waitLine*/
+        int TM, int nextArrivalTime, int nextDepartureTime, ArrayList<Server> servers, ArrayList<Client> waitLine
+        */
         events.add(new Event(eventCounter, "Llegada", client,
-                0, newClient.getRealArrivalTime(), client.getDepartureTime(), servers));
+                0, nextClient.getRealArrivalTime(), client.getDepartureTime(), servers));
 
-        // Enter the cycle.
+        // Enter the Matrix.
         while (true){
+            // Current event.
             event = events.get(eventCounter);
 
             // Comparing next arrival time to next departure time. The lesser will be the next event.
@@ -199,44 +202,71 @@ public class Day {
                 client = clients.get(clientCounter);
 
                 // Checking availability of servers. If available, set the arriving client, else the client waits.
-                availableServer = getAvailableServer(servers);
-                if (availableServer != -1) {
+                serverID = getAvailableServer(servers);
+                if (serverID != -1) {
                     // A server is available.
-                    servers.get(availableServer).setAll(client, true);
+                    servers.get(serverID).setAll(client, true);
                     client.setAll(client.getRealArrivalTime());
                 }
                 else {
                     // No server is available, add client to wait line.
                     waitLine.add(client);
                 }
-
+// TODO: 11-06-2016  CHECK FOR 99999 AND CORRECT DEPARTURE TIME
                 // Check max clients to see if a new client is possible.
                 if ((config.getMaxClients() == -1)
                         || (countCurrentClients(event.getTM()) < config.getMaxClients())) {
                     // A new client is possible. Creating a new client.
-                    newClient = createClient(++clientCounter, event.getNextArrivalTime());
-                    clients.add(newClient);
+                    nextClient = createClient(++clientCounter, event.getNextArrivalTime());
+                    clients.add(nextClient);
 
-                    // Creating a new arrival event with the next clients arrival time.
+                    // Creating an arrival event with the next client's arrival time.
                     events.add(new Event(++eventCounter, "Llegada", client,
-                            client.getRealArrivalTime(), newClient.getRealArrivalTime(),
+                            client.getRealArrivalTime(), nextClient.getRealArrivalTime(),
                             event.getNextDepartureTime(), servers, waitLine));
                 }
                 else {
-                    // A new client is not possible, maximum reached.
-                    // Creating a new arrival event with next arrival time of 99999, so next event is a departure.
+                    /*
+                    A new client is not possible, maximum reached.
+                    Creating an arrival event with next arrival time of 99999, so next event is a departure.
+                    */
                     events.add(new Event(++eventCounter, "Llegada", client,
                             client.getRealArrivalTime(), 99999,
                             event.getNextDepartureTime(), servers, waitLine));
                 }
             }
             else {
-                // Next event is a departure. Getting the next departing client.
-                client = servers.get(findDepartingClient(servers, event.getTM())).getClient();
+                /*
+                Next event is a departure.
+                Getting the transitioning server ID (This server contains the departing client).
+                */
+                serverID = findDepartingClient(servers, event.getTM());
 
+                // Getting the departing client and releasing the server.
+                client = servers.get(serverID).getClient();
+                servers.get(serverID).clearAll();
+// TODO: 11-06-2016  CHECK FOR 99999 AND CORRECT ARRIVAL TIME
                 // Checking if the waiting line is empty or not.
                 if (waitLine.isEmpty()) {
+                    // Check if the servers are empty.
+                    if (findNextDepartingClient(servers) != -1){
+                        // Getting the next departing client.
+                        nextClient = servers.get(findNextDepartingClient(servers)).getClient();
 
+                        // Creating a departure event with the next client's departure time.
+                        events.add(new Event(++eventCounter, "Salida", client,
+                                client.getDepartureTime(), event.getNextArrivalTime(),
+                                nextClient.getDepartureTime(), servers, waitLine));
+                    }
+                    else{
+                        /*
+                        There isn't a next departing client.
+                        Creating a departure event with next departure time of 99999, so next event is an arrival.
+                        */
+                        events.add(new Event(++eventCounter, "Salida", client,
+                                client.getDepartureTime(), event.getNextArrivalTime(),
+                                99999, servers, waitLine));
+                    }
                 }
                 else {
 

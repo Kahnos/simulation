@@ -8,7 +8,7 @@ public class Server {
 
     int id = -1;
     private boolean busy = false;
-    private Client client;
+    private Client client = null;
 
     public Server() {
     }
@@ -56,9 +56,16 @@ public class Server {
         this.client = client;
     }
 
+    // -------------------- Other functions -------------------- //
+
     public void setAll(Client client, boolean busy){
         this.client = client;
         this.busy = busy;
+    }
+
+    public void clearAll(){
+        client = null;
+        busy = false;
     }
 
 }

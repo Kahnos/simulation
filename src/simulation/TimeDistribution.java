@@ -9,10 +9,10 @@ import java.util.ArrayList;
  */
 public class TimeDistribution {
 
-    private int time;
-    private double probabilityMin;
-    private double probabilityMax;
-    private double probabilityTotal;
+    private int time = -1;
+    private double probabilityMin = -1;
+    private double probabilityMax = -1;
+    private double probabilityTotal = -1;
 
     public TimeDistribution() {
     }
