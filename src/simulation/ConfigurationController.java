@@ -142,7 +142,6 @@ public class ConfigurationController implements Initializable {
             System.out.println("Sumatoria de probabilidades incorrecta");
         //}
 
-
     }
 
 }

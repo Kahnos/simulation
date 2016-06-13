@@ -9,10 +9,10 @@ import java.util.ArrayList;
  */
 public class TimeDistribution {
 
-    private int time;
-    private double probabilityMin;
-    private double probabilityMax;
-    private double probabilityTotal;
+    private int time = -1;
+    private double probabilityMin = -1;
+    private double probabilityMax = -1;
+    private double probabilityTotal = -1;
 
     public TimeDistribution() {
     }
@@ -31,21 +31,20 @@ public class TimeDistribution {
      * @param timeDistributions contains all the previous TDs added by the user.
      */
     public TimeDistribution(int time, double probabilityTotal, ArrayList<TimeDistribution> timeDistributions){
-        this.time = time;
+        double probabilityCounter = 0;
 
         if (timeDistributions.isEmpty()){
             probabilityMin = 0;
             probabilityMax = probabilityTotal - 0.01;
         }
         else{
-            int probabilityCounter = 0;
             for (TimeDistribution TD : timeDistributions) {
-                probabilityCounter += probabilityCounter + TD.getProbabilityTotal();
+                probabilityCounter += TD.getProbabilityTotal();
             }
-            probabilityCounter -= 0.01;
             probabilityMin = probabilityCounter;
-            probabilityMax = probabilityCounter + probabilityTotal;
+            probabilityMax = probabilityCounter + probabilityTotal - 0.01;
         }
+        this.time = time;
         this.probabilityTotal = probabilityTotal;
     }
 

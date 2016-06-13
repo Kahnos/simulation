@@ -1,18 +1,21 @@
 package simulation;
 
+import java.io.Serializable;
+
 /**
  * Created by Kahnos - libcorrales.
  * Contains information about a specific client.
  */
-public class Client {
+public class Client implements Serializable{
 
     private int id = -1;
     private int relativeArrivalTime = -1; // Arrival time assigned by probability.
     private int realArrivalTime = -1;     // Time the client arrives into the system.
-    private int departureTime = -1;       // Time the client leaves the system.
     private int serviceTime = -1;         // Service time assigned by probability.
     private int servedTime = -1;          // Time when a client is served.
+    private int departureTime = -1;       // Time the client leaves the system.
     private int waitTime = -1;            // Total time the client waits in line.
+
 
     public Client() {
     }
@@ -151,5 +154,19 @@ public class Client {
         return waitTime;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder string = new StringBuilder();
+
+        string.append("ID: ").append(id).append(" - ");
+        string.append("relativeArrival: ").append(relativeArrivalTime).append(" - ");
+        string.append("realArrival: ").append(realArrivalTime).append(" - ");
+        string.append("service: ").append(serviceTime).append(" - ");
+        string.append("served: ").append(servedTime).append(" - ");
+        string.append("departure: ").append(departureTime).append(" - ");
+        string.append("wait: ").append(waitTime).append("\n");
+
+        return string.toString();
+    }
 
 }
