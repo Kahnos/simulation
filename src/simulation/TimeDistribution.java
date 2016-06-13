@@ -111,7 +111,7 @@ public class TimeDistribution {
         double probabilitySummary = 0;
 
         for (TimeDistribution TD : timeDistributions) {
-            probabilitySummary += probabilitySummary;
+            probabilitySummary += TD.getProbabilityTotal();
         }
 
         if ((probabilitySummary < 0)||(probabilitySummary > 1))
@@ -120,6 +120,12 @@ public class TimeDistribution {
             return 0;
 
         return 1;
+    }
+
+    @Override
+    public String toString(){
+        return "Time: " + Integer.toString(time) + " - P. Total: " + Double.toString(probabilityTotal) + " - P. Min: "
+                + Double.toString(probabilityMin) + " - P. Max: " + Double.toString(probabilityMax);
     }
 
 }
