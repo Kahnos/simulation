@@ -294,7 +294,7 @@ public class Day {
                         servers.get(serverID).setAll(waitLine.get(0), true);
 
                         // Updating the client's attributes and the waiting line.
-                        clients.get(waitLine.get(0).getId()).setAll(event.getNextDepartureTime());
+                        clients.get(waitLine.get(0).getId() - 1).setAll(event.getNextDepartureTime());
                         waitLine.remove(0);
                     }
                     // Getting the next departing client.
