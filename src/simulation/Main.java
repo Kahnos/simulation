@@ -24,7 +24,7 @@ public class Main extends Application {
         config.setAllMinMax();
 
         Day day = new Day(1, config);
-        System.out.println(day.toString());*/
+        System.out.println(day.toString());
     }
 
 
