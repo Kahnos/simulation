@@ -1,9 +1,13 @@
 package simulation;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import javafx.collections.ObservableList;
 
-import javax.smartcardio.ATR;
-import java.sql.Time;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 /**
@@ -99,6 +103,56 @@ public class Config {
     public void setServiceDistribution(ObservableList<TimeDistribution> serviceDistribution) {
         this.serviceDistribution.clear();
         this.serviceDistribution.addAll(serviceDistribution);
+    }
+
+    // -------------------- Other functions -------------------- //
+
+    /**
+     * Sets the minimum and maximum probability based on the probability total.
+     */
+    public void setAllMinMax() {
+        double minAux;
+        double maxAux;
+
+        for (int i = 0; i < arrivalDistribution.size(); i++) {
+            minAux = TimeDistribution.probabilityPreviousSummary(arrivalDistribution, i);
+            arrivalDistribution.get(i).setProbabilityMin(minAux);
+
+            maxAux = minAux + arrivalDistribution.get(i).getProbabilityTotal() - 0.01;
+            arrivalDistribution.get(i).setProbabilityMax(maxAux);
+        }
+
+        for (int i = 0; i < serviceDistribution.size(); i++) {
+            minAux = TimeDistribution.probabilityPreviousSummary(serviceDistribution, i);
+            serviceDistribution.get(i).setProbabilityMin(minAux);
+
+            maxAux = minAux + serviceDistribution.get(i).getProbabilityTotal() - 0.01;
+            serviceDistribution.get(i).setProbabilityMax(maxAux);
+        }
+    }
+
+    /**
+     * Reads the configuration (in JSON format) from a file and parses it to an object using Gson.
+     * @param filePath contains the path to the file containing the JSON configuration.
+     * @return the parsed Config or null if an error occurs.
+     */
+    public static Config readConfigFromFile(String filePath) throws IOException{
+        Config config = null;
+        Gson gson = new GsonBuilder().create();
+
+        try {
+            // Reading file into String using UTF8 encoding.
+            String configString = new String(Files.readAllBytes(Paths.get(filePath)), StandardCharsets.UTF_8);
+
+            // Parsing the JSON string to Config.
+            config = gson.fromJson(configString, Config.class);
+        } catch (IOException e) {
+            System.err.println("Error reading from file " + filePath);
+        } catch (Exception e) {
+            System.err.println("Error: " + e);
+        }
+
+        return config;
     }
 
     @Override

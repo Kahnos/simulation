@@ -87,6 +87,22 @@ public class TimeDistribution {
     // -------------------- Other functions -------------------- //
 
     /**
+     * Adds up the probabilities of all TDs with index i or lower, then returns it.
+     * @param timeDistributions contains all the TDs.
+     * @param index contains the index to check.
+     * @return the summary of distribution totals.
+     */
+    public static double probabilityPreviousSummary(ArrayList<TimeDistribution> timeDistributions, int index) {
+        double summary = 0;
+
+        for (int i = 0; i < index; i++) {
+            summary += timeDistributions.get(i).getProbabilityTotal();
+        }
+
+        return summary;
+    }
+
+    /**
      * Verifies that the summary of time distribution totals in the ArrayList is less than 1 or adds up to 1 exactly.
      * @param timeDistributions contains the TDs to verify.
      * @return -1 if the summary is < 0 || > 1, 0 if the summary is >= 0 && < 1, 1 if the summary is 1.
