@@ -66,16 +66,16 @@ public class Day {
         double randomServiceNumber = Math.random();
         int arrivalTime = -1;
         int serviceTime = -1;
-
+// TODO: 13-06-2016  SET PROBABILITIES TO < OR 24.9999999999999999
         for (TimeDistribution AD : config.getArrivalDistribution())
             if ((randomArrivalNumber >= AD.getProbabilityMin())
-                    && (randomArrivalNumber <= AD.getProbabilityMax())) {
+                    && (randomArrivalNumber < (AD.getProbabilityMax() + 0.01))) {
                 arrivalTime = AD.getTime();
             }
 
         for (TimeDistribution SD : config.getServiceDistribution())
             if ((randomServiceNumber >= SD.getProbabilityMin())
-                    && (randomServiceNumber <= SD.getProbabilityMax())) {
+                    && (randomServiceNumber < (SD.getProbabilityMax() + 0.01))) {
                 serviceTime = SD.getTime();
             }
 
