@@ -271,7 +271,7 @@ public class Day {
                 serverID = findDepartingClient(servers, event.getNextDepartureTime());
 
                 // Getting the departing client and releasing the server.
-                 client = servers.get(serverID).getClient();
+                client = servers.get(serverID).getClient();
                 servers.get(serverID).clearAll();
 
                 // Checking if the waiting line and the servers are empty.

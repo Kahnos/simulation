@@ -68,4 +68,15 @@ public class Server {
         busy = false;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder string = new StringBuilder();
+
+        string.append("ID: ").append(id).append(" - ");
+        string.append("Busy: ").append(busy).append(" - ");
+        string.append("Client: ").append(client.getId()).append("\n");
+
+        return string.toString();
+    }
+
 }
