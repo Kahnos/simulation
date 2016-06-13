@@ -96,7 +96,7 @@ public class TimeDistribution {
         double probabilitySummary = 0;
 
         for (TimeDistribution TD : timeDistributions) {
-            probabilitySummary += probabilitySummary;
+            probabilitySummary += TD.getProbabilityTotal();
         }
 
         if ((probabilitySummary < 0)||(probabilitySummary > 1))

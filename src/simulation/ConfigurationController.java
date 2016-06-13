@@ -30,25 +30,26 @@ public class ConfigurationController implements Initializable {
     @FXML private TextField arrivalProbField = new TextField();
 
     //Service time table
-    @FXML TableView<TimeDistribution> serviceTable;
-    @FXML TableColumn<TimeDistribution, Integer> timeColumnService;
-    @FXML TableColumn<TimeDistribution, Integer> probColumnService;
-    @FXML TextField serviceTimeField = new TextField();
-    @FXML TextField serviceProbField = new TextField();
+    @FXML private TableView<TimeDistribution> serviceTable;
+    @FXML private TableColumn<TimeDistribution, Integer> timeColumnService;
+    @FXML private TableColumn<TimeDistribution, Integer> probColumnService;
+    @FXML private TextField serviceTimeField = new TextField();
+    @FXML private TextField serviceProbField = new TextField();
 
-    @FXML Button simulationButton;
-    @FXML Button addButtonArrival;
-    @FXML Button deleteButtonArrival;
-    @FXML Button addButtonService;
-    @FXML Button deleteButtonService;
-    @FXML Button fileButton;
+    @FXML private Button simulationButton;
+    @FXML private Button addButtonArrival;
+    @FXML private Button deleteButtonArrival;
+    @FXML private Button addButtonService;
+    @FXML private Button deleteButtonService;
+    @FXML private Button fileButton;
+    @FXML private Config config;
 
-    @FXML AreaChart chart;
+    @FXML private AreaChart chart;
 
-    Spinner spinner;
+    private Spinner spinner;
 
 
-    @FXML FileChooser fileChooser = new FileChooser();
+    @FXML private FileChooser fileChooser = new FileChooser();
 
     @Override
     public void initialize (URL url, ResourceBundle rb){
@@ -115,16 +116,33 @@ public class ConfigurationController implements Initializable {
         arrivalTableItems.addAll(arrivalTable.getItems());
         for (TimeDistribution TD : arrivalTableItems) {
             TD.toString();*/
-        SimulationController sc = new SimulationController();
-        sc.display();
-        Stage primaryStage = (Stage) simulationButton.getScene().getWindow();
-        primaryStage.close();
-    }
 
-//    public ObservableList<Day> getData(){
-//        ObservableList<Day> list = FXCollections.observableArrayList();
-//        list.add(day);
-//        return list;
-//    }
+        //Se obtienen todos los elementos de la tabla de distribución de tiempo de llegadas
+        ArrayList<TimeDistribution> arrivalTableItems = new ArrayList<>();
+        arrivalTableItems.addAll(arrivalTable.getItems());
+
+        ArrayList<TimeDistribution> serviceTableItems = new ArrayList<>();
+        serviceTableItems.addAll(serviceTable.getItems());
+
+       // if ((TimeDistribution.verifyProbabilities(arrivalTableItems)==1) && (TimeDistribution.verifyProbabilities(serviceTableItems)==1)){
+            SimulationController sc = new SimulationController();
+        config = new Config(1,60,1,2,arrivalTableItems,serviceTableItems);
+//        config.setServerAmount(1);
+//        config.setSimulationDays(1);
+//        config.setArrivalDistribution(arrivalTableItems);
+//        config.setMaxClients(2);
+//        config.setOpenTime(60);
+//        config.setServiceDistribution(serviceTableItems);
+
+
+            sc.display(config);
+            Stage primaryStage = (Stage) simulationButton.getScene().getWindow();
+            primaryStage.close();
+       // }else {
+            System.out.println("Sumatoria de probabilidades incorrecta");
+        //}
+
+
+    }
 
 }
