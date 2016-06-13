@@ -66,7 +66,7 @@ public class Day {
         double randomServiceNumber = Math.random();
         int arrivalTime = -1;
         int serviceTime = -1;
-// TODO: 13-06-2016  SET PROBABILITIES TO < OR 24.9999999999999999
+
         for (TimeDistribution AD : config.getArrivalDistribution())
             if ((randomArrivalNumber >= AD.getProbabilityMin())
                     && (randomArrivalNumber < (AD.getProbabilityMax() + 0.01))) {
@@ -84,20 +84,19 @@ public class Day {
 
     /**
      * Counts the number of clients currently in the system and returns it.
-     * @param TM contains the current TM.
+     * @param servers contains the servers.
+     * @param waitingLineLength contains the waiting line length.
      * @return the current number of clients in the system.
      */
-    private int countCurrentClients(int TM) {
+    private int countCurrentClients(ArrayList<Server> servers, int waitingLineLength) {
         int clientCounter = 0;
 
-        // Count the clients inside the system.
-        for (Client client : clients)
-            if ((client.getRealArrivalTime() >= TM)
-                    && ((client.getDepartureTime() < TM) || (client.getDepartureTime() == -1)))
-                clientCounter++;
+        for (Server server : servers) {
+            if (server.isBusy())
+                ++clientCounter;
+        }
 
-        // Add 1 because the next arrival has not been accounted.
-        return clientCounter + 1;
+        return clientCounter + waitingLineLength;
     }
 
     /**
@@ -219,7 +218,7 @@ public class Day {
                 // Check if business is open and maximum clients hasn't been reached.
                 if ((openBusiness) &&
                         ((config.getMaxClients() == -1) ||
-                        (countCurrentClients(event.getTM()) < config.getMaxClients()))) {
+                        (countCurrentClients(servers, waitLine.size()) < config.getMaxClients()))) {
                     // A new client is possible. Creating a new client.
                     newClient = createClient(++clientCounter, event.getNextArrivalTime());
                     clients.add(newClient);
@@ -251,6 +250,11 @@ public class Day {
                         clients.remove(clientCounter - 1);
                         --clientCounter;
                         openBusiness = false;
+
+                        // Creating an arrival event with next arrival time of 9999, so next event is a departure.
+                        events.add(new Event(++eventCounter, "Llegada", client,
+                                client.getRealArrivalTime(), 9999,
+                                event.getNextDepartureTime(), servers, waitLine));
                     }
                 }
                 else {
@@ -322,8 +326,6 @@ public class Day {
                             The business is still open and the client arrives before closing time.
                             Creating a departure event with the next client's departure time and the new client's arrival time.
                             */
-                            waitLine.add(newClient);
-
                             events.add(new Event(++eventCounter, "Salida", client,
                                     client.getDepartureTime(), newClient.getRealArrivalTime(),
                                     nextClient.getDepartureTime(), servers, waitLine));
@@ -333,6 +335,11 @@ public class Day {
                             clients.remove(clientCounter - 1);
                             --clientCounter;
                             openBusiness = false;
+
+                            // Creating a departure event with the next client's departure time and an arrival time of 9999.
+                            events.add(new Event(++eventCounter, "Salida", client,
+                                    client.getDepartureTime(), 9999,
+                                    nextClient.getDepartureTime(), servers, waitLine));
                         }
                     }
                 }
@@ -345,6 +352,7 @@ public class Day {
         StringBuilder string = new StringBuilder();
 
         // Printing configuration.
+        string.append("Configuration: \n");
         string.append(config);
 
         // Printing all clients.
@@ -356,10 +364,10 @@ public class Day {
 
         // Printing all clients' arrival and service times in table format.
         string.append("Clients' arrival and service times: \n");
-        string.append(String.format("%5s%5s%5s","ID","AT","ST"));
-        string.append("===============");
+        string.append(String.format("%10s%10s%10s\n","ID","AT","ST"));
+        string.append("=====================================\n");
         for (Client client : clients) {
-            string.append(String.format("%5d%5d%5d", client.getId(), client.getRealArrivalTime(), client.getServiceTime()));
+            string.append(String.format("%10d%10d%10d\n", client.getId(), client.getRealArrivalTime(), client.getServiceTime()));
         }
         string.append("\n\n");
 
@@ -369,10 +377,10 @@ public class Day {
         string.append(String.format("%5s%15s%10s%5s","ID","Type","Client","TM"));
 
         for (int i = 0; i < config.getServerAmount(); i++) {
-            string.append(String.format("%5s", "S" + i));
+            string.append(String.format("%5s ", "S" + i));
         }
 
-        string.append(String.format("10s%5s%5s\n","Waiting","AT", "DT"));
+        string.append(String.format("%10s%10s%10s\n","Waiting","AT", "DT"));
 
         string.append("===================================");
 
@@ -380,7 +388,7 @@ public class Day {
             string.append("=====");
         }
 
-        string.append("====================\n");
+        string.append("===================================\n");
 
         // Table body.
         for (Event event : events) {

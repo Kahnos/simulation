@@ -167,12 +167,12 @@ public class Event {
 
         for (Server server : servers) {
             if (server.isBusy())
-                string.append(String.format("%5d", 1));
+                string.append(String.format("%5d ", 1));
             else
-                string.append(String.format("%5d", 0));
+                string.append(String.format("%5d ", 0));
         }
 
-        string.append(String.format("%10d%5d%5d\n",waitLine.size(),nextArrivalTime, nextDepartureTime));
+        string.append(String.format("%10d%10d%10d\n",waitLine.size(),nextArrivalTime, nextDepartureTime));
 
         return string.toString();
     }

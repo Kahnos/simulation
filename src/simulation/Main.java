@@ -32,7 +32,7 @@ public class Main extends Application {
         serviceDistribution.add(new TimeDistribution(14, 0.25, serviceDistribution));
         serviceDistribution.add(new TimeDistribution(18, 0.25, serviceDistribution));
 
-        Config config = new Config(1, 60, 2, 6, arrivalDistribution, serviceDistribution);
+        Config config = new Config(1, 60, 2, 4, arrivalDistribution, serviceDistribution);
         Day day = new Day(1, config);
         System.out.println(day.toString());
     }

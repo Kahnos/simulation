@@ -113,19 +113,19 @@ public class Config {
 
         // Printing arrival distributions.
         string.append("Arrival distribution: \n");
-        string.append(String.format("%5s%5s%5s","Time","Min","Max"));
-        string.append("===============");
+        string.append(String.format("%10s%10s%10s\n","Time","Min","Max"));
+        string.append("====================================\n");
         for (TimeDistribution AT : arrivalDistribution) {
-            string.append(String.format("%5d%5.2f%5.2f", AT.getTime(), AT.getProbabilityMin(), AT.getProbabilityMax()));
+            string.append(String.format("%10d%10.2f%10.2f\n", AT.getTime(), AT.getProbabilityMin(), AT.getProbabilityMax()));
         }
         string.append("\n\n");
 
         // Printing service distributions.
         string.append("Service distribution: \n");
-        string.append(String.format("%5s%5s%5s","Time","Min","Max"));
-        string.append("===============");
+        string.append(String.format("%10s%10s%10s\n","Time","Min","Max"));
+        string.append("====================================\n");
         for (TimeDistribution ST : serviceDistribution) {
-            string.append(String.format("%5d%5.2f%5.2f", ST.getTime(), ST.getProbabilityMin(), ST.getProbabilityMax()));
+            string.append(String.format("%10d%10.2f%10.2f\n", ST.getTime(), ST.getProbabilityMin(), ST.getProbabilityMax()));
         }
         string.append("\n\n");
 
