@@ -187,7 +187,7 @@ public class Day {
 
         // Creating the first event, the arrival of the first client.
         events.add(new Event(eventCounter, "Llegada", client,
-                0, newClient.getRealArrivalTime(), client.getDepartureTime(), servers));
+                0, newClient.getRealArrivalTime(), client.getDepartureTime(), servers, 1));
 
         // Enter the Matrix.
         while (true) {
@@ -233,7 +233,7 @@ public class Day {
                             // Creating an arrival event with the new client's arrival time.
                             events.add(new Event(++eventCounter, "Llegada", client,
                                     client.getRealArrivalTime(), newClient.getRealArrivalTime(),
-                                    event.getNextDepartureTime(), servers, waitLine));
+                                    event.getNextDepartureTime(), servers, waitLine, countCurrentClients(servers, waitLine.size())));
                         }
                         else {
                             /*
@@ -242,7 +242,7 @@ public class Day {
                             */
                             events.add(new Event(++eventCounter, "Llegada", client,
                                     client.getRealArrivalTime(), newClient.getRealArrivalTime(),
-                                    client.getDepartureTime(), servers, waitLine));
+                                    client.getDepartureTime(), servers, waitLine, countCurrentClients(servers, waitLine.size())));
                         }
                     }
                     else {
@@ -254,7 +254,7 @@ public class Day {
                         // Creating an arrival event with next arrival time of 9999, so next event is a departure.
                         events.add(new Event(++eventCounter, "Llegada", client,
                                 client.getRealArrivalTime(), 9999,
-                                event.getNextDepartureTime(), servers, waitLine));
+                                event.getNextDepartureTime(), servers, waitLine, countCurrentClients(servers, waitLine.size())));
                     }
                 }
                 else {
@@ -264,7 +264,7 @@ public class Day {
                     */
                     events.add(new Event(++eventCounter, "Llegada", client,
                             client.getRealArrivalTime(), 9999,
-                            event.getNextDepartureTime(), servers, waitLine));
+                            event.getNextDepartureTime(), servers, waitLine, countCurrentClients(servers, waitLine.size())));
                 }
             }
             else {
@@ -287,7 +287,7 @@ public class Day {
                     */
                     events.add(new Event(++eventCounter, "Salida", client,
                             client.getDepartureTime(), event.getNextArrivalTime(),
-                            9999, servers, waitLine));
+                            9999, servers, waitLine, countCurrentClients(servers, waitLine.size())));
                 }
                 else {
                     if (!waitLine.isEmpty()) {
@@ -309,7 +309,7 @@ public class Day {
                         // Creating a departure event with the next client's departure time.
                         events.add(new Event(++eventCounter, "Salida", client,
                                 client.getDepartureTime(), event.getNextArrivalTime(),
-                                nextClient.getDepartureTime(), servers, waitLine));
+                                nextClient.getDepartureTime(), servers, waitLine, countCurrentClients(servers, waitLine.size())));
                     }
                     else {
                         /*
@@ -328,7 +328,7 @@ public class Day {
                             */
                             events.add(new Event(++eventCounter, "Salida", client,
                                     client.getDepartureTime(), newClient.getRealArrivalTime(),
-                                    nextClient.getDepartureTime(), servers, waitLine));
+                                    nextClient.getDepartureTime(), servers, waitLine, countCurrentClients(servers, waitLine.size())));
                         }
                         else {
                             // The client arrives after closing time. Rollback changes and close business.
@@ -339,7 +339,7 @@ public class Day {
                             // Creating a departure event with the next client's departure time and an arrival time of 9999.
                             events.add(new Event(++eventCounter, "Salida", client,
                                     client.getDepartureTime(), 9999,
-                                    nextClient.getDepartureTime(), servers, waitLine));
+                                    nextClient.getDepartureTime(), servers, waitLine, countCurrentClients(servers, waitLine.size())));
                         }
                     }
                 }
@@ -365,7 +365,7 @@ public class Day {
         // Printing all clients' arrival and service times in table format.
         string.append("Clients' arrival and service times: \n");
         string.append(String.format("%10s%10s%10s\n","ID","AT","ST"));
-        string.append("=====================================\n");
+        string.append("======================================\n");
         for (Client client : clients) {
             string.append(String.format("%10d%10d%10d\n", client.getId(), client.getRealArrivalTime(), client.getServiceTime()));
         }
@@ -374,13 +374,13 @@ public class Day {
         // Printing all events in table format.
         // Table header.
         string.append("Events: \n");
-        string.append(String.format("%5s%15s%10s%5s","ID","Type","Client","TM"));
+        string.append(String.format("%5s%15s%10s%5s", "ID", "Type", "Client", "TM"));
 
         for (int i = 0; i < config.getServerAmount(); i++) {
             string.append(String.format("%5s ", "S" + i));
         }
 
-        string.append(String.format("%10s%10s%10s\n","Waiting","AT", "DT"));
+        string.append(String.format("%10s%10s%10s%10s\n", "Waiting", "Total", "AT", "DT"));
 
         string.append("===================================");
 
@@ -388,7 +388,7 @@ public class Day {
             string.append("=====");
         }
 
-        string.append("===================================\n");
+        string.append("=============================================\n");
 
         // Table body.
         for (Event event : events) {

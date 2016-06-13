@@ -18,13 +18,15 @@ public class Event {
     private int TM = -1;
     private ArrayList<Server> servers = new ArrayList<>();
     private ArrayList<Client> waitLine = new ArrayList<>();
+    private int totalClients = -1;
     private int nextArrivalTime = -1;
     private int nextDepartureTime = -1;
 
     public Event() {
     }
 
-    public Event(int eventID, String type, Client client, int TM, int nextArrivalTime, int nextDepartureTime, ArrayList<Server> servers) {
+    public Event(int eventID, String type, Client client, int TM, int nextArrivalTime, int nextDepartureTime,
+                 ArrayList<Server> servers, int totalClients) {
         this.eventID = eventID;
         this.type = type;
         this.client = client;
@@ -34,9 +36,11 @@ public class Event {
         for (Server server : servers) {
             this.servers.add((Server) deepClone(server));
         }
+        this.totalClients = totalClients;
     }
 
-    public Event(int eventID, String type, Client client, int TM, int nextArrivalTime, int nextDepartureTime, ArrayList<Server> servers, ArrayList<Client> waitLine) {
+    public Event(int eventID, String type, Client client, int TM, int nextArrivalTime, int nextDepartureTime,
+                 ArrayList<Server> servers, ArrayList<Client> waitLine, int totalClients) {
         this.eventID = eventID;
         this.type = type;
         this.client = client;
@@ -47,6 +51,7 @@ public class Event {
         this.waitLine = (ArrayList) waitLine.clone();
         this.nextArrivalTime = nextArrivalTime;
         this.nextDepartureTime = nextDepartureTime;
+        this.totalClients = totalClients;
     }
 
     // -------------------- Getters -------------------- //
@@ -81,6 +86,10 @@ public class Event {
 
     public int getNextDepartureTime() {
         return nextDepartureTime;
+    }
+
+    public int getTotalClients() {
+        return totalClients;
     }
 
     // -------------------- Setters -------------------- //
@@ -118,6 +127,10 @@ public class Event {
 
     public void setNextDepartureTime(int nextDepartureTime) {
         this.nextDepartureTime = nextDepartureTime;
+    }
+
+    public void setTotalClients(int totalClients) {
+        this.totalClients = totalClients;
     }
 
     // -------------------- Other functions -------------------- //
@@ -163,7 +176,7 @@ public class Event {
     public String toString() {
         StringBuilder string = new StringBuilder();
 
-        string.append(String.format("%5d%15s%10d%5d",eventID,type,client.getId(),TM));
+        string.append(String.format("%5d%15s%10d%5d", eventID, type, client.getId(), TM));
 
         for (Server server : servers) {
             if (server.isBusy())
@@ -172,7 +185,7 @@ public class Event {
                 string.append(String.format("%5d ", 0));
         }
 
-        string.append(String.format("%10d%10d%10d\n",waitLine.size(),nextArrivalTime, nextDepartureTime));
+        string.append(String.format("%10d%10d%10d%10d\n",waitLine.size(), totalClients, nextArrivalTime, nextDepartureTime));
 
         return string.toString();
     }
