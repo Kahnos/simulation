@@ -20,11 +20,11 @@ public class Main extends Application {
 
         // Test objects.
         ArrayList<TimeDistribution> arrivalDistribution = new ArrayList<>();
-        arrivalDistribution.add(new TimeDistribution(1, 0.5, arrivalDistribution));
-        arrivalDistribution.add(new TimeDistribution(2, 0.2, arrivalDistribution));
-        arrivalDistribution.add(new TimeDistribution(3, 0.15, arrivalDistribution));
-        arrivalDistribution.add(new TimeDistribution(4, 0.05, arrivalDistribution));
-        arrivalDistribution.add(new TimeDistribution(5, 0.1, arrivalDistribution));
+        arrivalDistribution.add(new TimeDistribution(3, 0.5, arrivalDistribution));
+        arrivalDistribution.add(new TimeDistribution(6, 0.2, arrivalDistribution));
+        arrivalDistribution.add(new TimeDistribution(9, 0.15, arrivalDistribution));
+        arrivalDistribution.add(new TimeDistribution(12, 0.05, arrivalDistribution));
+        arrivalDistribution.add(new TimeDistribution(15, 0.1, arrivalDistribution));
 
         ArrayList<TimeDistribution> serviceDistribution = new ArrayList<>();
         serviceDistribution.add(new TimeDistribution(10, 0.25, serviceDistribution));

@@ -1,10 +1,12 @@
 package simulation;
 
+import java.io.Serializable;
+
 /**
  * Created by Kahnos - libcorrales.
  * Contains the current status and client of a server.
  */
-public class Server {
+public class Server implements Serializable{
 
     int id = -1;
     private boolean busy = false;
@@ -74,7 +76,10 @@ public class Server {
 
         string.append("ID: ").append(id).append(" - ");
         string.append("Busy: ").append(busy).append(" - ");
-        string.append("Client: ").append(client.getId()).append("\n");
+        if (client == null)
+            string.append("Client: null").append("\n");
+        else
+            string.append("Client: ").append(client.getId()).append("\n");
 
         return string.toString();
     }

@@ -1,10 +1,12 @@
 package simulation;
 
+import java.io.Serializable;
+
 /**
  * Created by Kahnos - libcorrales.
  * Contains information about a specific client.
  */
-public class Client {
+public class Client implements Serializable{
 
     private int id = -1;
     private int relativeArrivalTime = -1; // Arrival time assigned by probability.

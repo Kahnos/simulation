@@ -1,5 +1,9 @@
 package simulation;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 /**
@@ -27,8 +31,9 @@ public class Event {
         this.TM = TM;
         this.nextArrivalTime = nextArrivalTime;
         this.nextDepartureTime = nextDepartureTime;
-        this.servers = (ArrayList) servers.clone();
-        ;
+        for (Server server : servers) {
+            this.servers.add((Server) deepClone(server));
+        }
     }
 
     public Event(int eventID, String type, Client client, int TM, int nextArrivalTime, int nextDepartureTime, ArrayList<Server> servers, ArrayList<Client> waitLine) {
@@ -36,7 +41,9 @@ public class Event {
         this.type = type;
         this.client = client;
         this.TM = TM;
-        this.servers = (ArrayList) servers.clone();
+        for (Server server : servers) {
+            this.servers.add((Server) deepClone(server));
+        }
         this.waitLine = (ArrayList) waitLine.clone();
         this.nextArrivalTime = nextArrivalTime;
         this.nextDepartureTime = nextDepartureTime;
@@ -95,7 +102,10 @@ public class Event {
     }
 
     public void setServers(ArrayList<Server> servers) {
-        this.servers = (ArrayList) servers.clone();
+        this.servers.clear();
+        for (Server server : servers) {
+            this.servers.add((Server) deepClone(server));
+        }
     }
 
     public void setWaitLine(ArrayList<Client> waitLine) {
@@ -128,6 +138,25 @@ public class Event {
      */
     public void setServer(Client client, int index) {
         servers.get(index).setClient(client);
+    }
+
+    /**
+     * This method makes a "deep clone" of any Java object it is given.
+     * Taken from: http://alvinalexander.com/java/java-deep-clone-example-source-code
+     */
+    public static Object deepClone(Object object) {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(object);
+            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+            ObjectInputStream ois = new ObjectInputStream(bais);
+            return ois.readObject();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
