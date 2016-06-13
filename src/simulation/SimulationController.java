@@ -2,6 +2,7 @@ package simulation;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -50,7 +51,7 @@ public class SimulationController extends VBox {
     @FXML private TableColumn<Event, Integer> totalClientsColumn = new TableColumn<>();
     @FXML private TableColumn<Event, Integer> atColumn = new TableColumn<>();
     @FXML private TableColumn<Event, Integer> dtColumn = new TableColumn<>();
-    @FXML private TableColumn [] tableColumns;
+    @FXML private TableColumn<Event, Integer> [] tableColumns;
     private Config config;
 
     public SimulationController() {
@@ -70,6 +71,12 @@ public class SimulationController extends VBox {
 
         this.config = config;
 
+        // Test day
+        Day testDay = getTestDay();
+
+        ObservableList<Event> eventList = FXCollections.observableArrayList();
+        eventList.addAll(testDay.getEvents());
+
         //Creación de las columnas de la tabla de simulación
         //Eventos
         idColumn.setCellValueFactory(new PropertyValueFactory<>("eventID"));
@@ -78,7 +85,7 @@ public class SimulationController extends VBox {
         typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
         typeColumn.setText("Tipo");
         //Número de cliente
-        clientColumn.setCellValueFactory(new PropertyValueFactory<>("client"));
+        clientColumn.setCellValueFactory(event -> new SimpleObjectProperty<Integer>(event.getValue().getClient().getId()));
         clientColumn.setText("Cliente");
         //TM
         tmColumn.setCellValueFactory(new PropertyValueFactory<>("TM"));
@@ -86,11 +93,11 @@ public class SimulationController extends VBox {
         simulationTable.getColumns().addAll(idColumn,typeColumn,clientColumn,tmColumn);
 
         //Cola de espera
-        waitlineColumn.setCellValueFactory(waitline -> new SimpleObjectProperty<Integer>(waitline.getValue().getWaitLine().size()));
+        waitlineColumn.setCellValueFactory(event -> new SimpleObjectProperty<Integer>(event.getValue().getWaitLine().size()));
         waitlineColumn.setText("Cola");
         //Total de clientes en el sistema
         totalClientsColumn.setCellValueFactory(new PropertyValueFactory<>("totalClients"));
-        totalClientsColumn.setText("");
+        totalClientsColumn.setText("Total");
         //AT
         atColumn.setCellValueFactory(new PropertyValueFactory<>("nextArrivalTime"));
         atColumn.setText("AT");
@@ -99,6 +106,28 @@ public class SimulationController extends VBox {
         dtColumn.setText("DT");
 
         tableColumns = new TableColumn[config.getServerAmount()];
+
+        for(int i=0; i < config.getServerAmount(); i++){
+            int finalI = i;
+            tableColumns[i] = new TableColumn<>();
+            tableColumns[i].setCellValueFactory(event -> {
+                int busy;
+
+                if (event.getValue().getServers().get(finalI).isBusy())
+                    busy = 1;
+                else
+                    busy = 0;
+
+                return new SimpleObjectProperty<>(busy);
+            });
+            tableColumns[i].setText("S" + i);
+            simulationTable.getColumns().add(tableColumns[i]);
+        }
+        simulationTable.getColumns().addAll(waitlineColumn,totalClientsColumn, atColumn, dtColumn);
+
+        simulationTable.setItems(eventList);
+//        simulationTable.setManaged(false);
+//        mainPanel.getChildren().remove(simulationTable);
 
 //        window.initModality(Modality.APPLICATION_MODAL);
 //        window.setTitle("mediConsulta - Agregar paciente");
@@ -116,6 +145,27 @@ public class SimulationController extends VBox {
 
 
 
+
+    }
+
+    public static Day getTestDay() {
+        ArrayList<TimeDistribution> arrivalDistribution = new ArrayList<>();
+        arrivalDistribution.add(new TimeDistribution(3, 0.5, arrivalDistribution));
+        arrivalDistribution.add(new TimeDistribution(6, 0.2, arrivalDistribution));
+        arrivalDistribution.add(new TimeDistribution(9, 0.15, arrivalDistribution));
+        arrivalDistribution.add(new TimeDistribution(12, 0.05, arrivalDistribution));
+        arrivalDistribution.add(new TimeDistribution(15, 0.1, arrivalDistribution));
+
+        ArrayList<TimeDistribution> serviceDistribution = new ArrayList<>();
+        serviceDistribution.add(new TimeDistribution(10, 0.25, serviceDistribution));
+        serviceDistribution.add(new TimeDistribution(12, 0.25, serviceDistribution));
+        serviceDistribution.add(new TimeDistribution(14, 0.25, serviceDistribution));
+        serviceDistribution.add(new TimeDistribution(18, 0.25, serviceDistribution));
+
+        Config config = new Config(1, 60, 2, 4, arrivalDistribution, serviceDistribution);
+        Day day = new Day(1, config);
+        System.out.println(day.toString());
+        return day;
     }
 
 }

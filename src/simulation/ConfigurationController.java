@@ -126,7 +126,7 @@ public class ConfigurationController implements Initializable {
 
        // if ((TimeDistribution.verifyProbabilities(arrivalTableItems)==1) && (TimeDistribution.verifyProbabilities(serviceTableItems)==1)){
             SimulationController sc = new SimulationController();
-        config = new Config(1,60,1,2,arrivalTableItems,serviceTableItems);
+            config = new Config(1, 60, 2, 4, arrivalTableItems, serviceTableItems);
 //        config.setServerAmount(1);
 //        config.setSimulationDays(1);
 //        config.setArrivalDistribution(arrivalTableItems);
