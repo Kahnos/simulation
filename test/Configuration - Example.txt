@@ -1,6 +1,6 @@
 {
-    "simulationDays": "300",
-    "openTime": "120",
+    "simulationDays": "3",
+    "openTime": "60",
     "serverAmount": "2",
     "maxClients": "6",
     "arrivalDistribution": [

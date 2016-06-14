@@ -23,8 +23,8 @@ public class Main extends Application {
         Config config = Config.readConfigFromFile("./test/Configuration - Example.txt");
         config.setAllMinMax();
 
-        Day day = new Day(1, config);
-        System.out.println(day.toString());
+        Simulation simulation = new Simulation(config);
+        System.out.println(simulation.toString());
     }
 
     public static void main(String[] args) {

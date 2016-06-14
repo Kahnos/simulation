@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 /**
  * Created by Kahnos - libcorrales.
- * Groups all the days in the simulation, the config and methods to perform statistical analysis.
+ * Groups all the days in the simulation, the config and methods to perform global statistical analysis.
  */
 public class Simulation {
 
@@ -49,12 +49,79 @@ public class Simulation {
      * Counts the clients that didn't wait per day and returns the average.
      * @return an average of the number of clients that didn't wait.
      */
-    public int countClientsWithoutWait(){
-        int count = 0;
+    public double countClientsWithoutWait(){
+        double count = 0;
+        double globalCount = 0;
 
-        
+        for (Day day : days) {
+            for (Client client : day.getClients()) {
+                if (client.getWaitTime() == 0)
+                    ++count;
+            }
+            globalCount += count;
+            count = 0;
+        }
 
-        return count;
+        return globalCount / config.getSimulationDays();
+    }
+
+    /**
+     * Counts the clients that waited per day and returns the average.
+     * @return an average of the number of clients that waited.
+     */
+    public double countClientsWithWait(){
+        double count = 0;
+        double globalCount = 0;
+
+        for (Day day : days) {
+            for (Client client : day.getClients()) {
+                if (client.getWaitTime() != 0)
+                    ++count;
+            }
+            globalCount += count;
+            count = 0;
+        }
+
+        return globalCount / config.getSimulationDays();
+    }
+
+    /**
+     * Calculates the probability that a client waits.
+     * @return an average of the probability a client waits.
+     */
+    public double getWaitProbability(){
+        double count = 0;
+        double globalCount = 0;
+
+        for (Day day : days) {
+            for (Client client : day.getClients()) {
+                if (client.getWaitTime() != 0)
+                    ++count;
+            }
+            globalCount += (count / day.getClients().size());
+            count = 0;
+        }
+
+        return globalCount / config.getSimulationDays();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder string = new StringBuilder();
+
+        // Printing configuration.
+        string.append("Configuration: \n");
+        string.append(config);
+
+        for (Day day : days) {
+            string.append(day);
+        }
+
+        string.append("Average clients without wait: ").append(countClientsWithoutWait()).append("\n");
+        string.append("Average clients with wait: ").append(countClientsWithWait()).append("\n");
+        string.append("Probability that a client waits: ").append(getWaitProbability()).append("\n");
+
+        return string.toString();
     }
 
 }

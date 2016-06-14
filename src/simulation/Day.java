@@ -351,9 +351,7 @@ public class Day {
     public String toString() {
         StringBuilder string = new StringBuilder();
 
-        // Printing configuration.
-        string.append("Configuration: \n");
-        string.append(config);
+        string.append("Day: " + dayID + "\n");
 
         // Printing all clients.
         string.append("Clients: \n");
