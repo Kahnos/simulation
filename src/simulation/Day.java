@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class Day {
 
     private int dayID = -1;
+    private int lostClients = 0;
     private Config config;
     private ArrayList<Event> events = new ArrayList<>();
     private ArrayList<Client> clients = new ArrayList<>();
@@ -37,6 +38,14 @@ public class Day {
 
     public ArrayList<Client> getClients() {
         return clients;
+    }
+
+    public int getLostClients() {
+        return lostClients;
+    }
+
+    public Config getConfig() {
+        return config;
     }
 
     // -------------------- Setters -------------------- //
@@ -265,6 +274,9 @@ public class Day {
                     events.add(new Event(++eventCounter, "Llegada", client,
                             client.getRealArrivalTime(), 9999,
                             event.getNextDepartureTime(), servers, waitLine, countCurrentClients(servers, waitLine.size())));
+
+                    if (openBusiness)
+                        ++lostClients;
                 }
             }
             else {

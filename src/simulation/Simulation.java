@@ -45,6 +45,45 @@ public class Simulation {
 
     // -------------------- Statistical functions -------------------- //
 
+    /*
+    *   Estadísticas a calcular:
+
+        Configuración de simulación
+
+        Cantidad promedio de clientes en el sistema
+
+        Cantidad promedio de clientes en cola
+
+        Probabilidad de esperar -> # Clientes sin espera / # Total de clientes DONE
+
+        PIECHART {
+            # Clientes con espera DONE
+
+            # Clientes sin espera DONE
+
+            # Clientes que se van sin ser atendidos DONE
+        }
+
+        BAR CHART {
+            Tiempo promedio de cliente en el sistema
+
+            Tiempo promedio que un cliente está en cola
+
+            Tiempo promedio en el sistema de un cliente que hace cola
+
+            Tiempo promedio en el sistema de un cliente que no hace cola
+
+            Tiempo promedio adicional de trabajo del negocio
+        }
+
+        BAR CHART {
+            Porcentaje de utilización de cada servidor
+
+            Porcentaje de utilización de todos los servidores
+        }
+
+    * */
+
     /**
      * Counts the clients that didn't wait per day and returns the average.
      * @return an average of the number of clients that didn't wait.
@@ -104,6 +143,23 @@ public class Simulation {
 
         return globalCount / config.getSimulationDays();
     }
+
+    /**
+     * Counts the clients that left per day and returns the average.
+     * @return an average of the number of clients who left unattended.
+     */
+    public double countLostClients(){
+        double globalCount = 0;
+
+        for (Day day : days) {
+            globalCount += day.getLostClients();
+        }
+
+        return globalCount / config.getSimulationDays();
+    }
+
+
+
 
     @Override
     public String toString() {
