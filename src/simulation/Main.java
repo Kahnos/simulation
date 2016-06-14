@@ -27,7 +27,6 @@ public class Main extends Application {
         System.out.println(day.toString());
     }
 
-
     public static void main(String[] args) {
         launch(args);
     }
