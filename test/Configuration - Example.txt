@@ -1,5 +1,5 @@
 {
-    "simulationDays": "3",
+    "simulationDays": "1",
     "openTime": "60",
     "serverAmount": "2",
     "maxClients": "6",
