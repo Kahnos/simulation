@@ -155,6 +155,8 @@ public class Config {
         return config;
     }
 
+    // TODO: 14/06/2016 SAVE CONFIG TO FILE
+    
     @Override
     public String toString() {
         StringBuilder string = new StringBuilder();

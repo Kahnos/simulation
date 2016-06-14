@@ -11,6 +11,7 @@ public class Day {
 
     private int dayID = -1;
     private int lostClients = 0;
+    private int finalTM = 0;
     private Config config;
     private ArrayList<Event> events = new ArrayList<>();
     private ArrayList<Client> clients = new ArrayList<>();
@@ -46,6 +47,10 @@ public class Day {
 
     public Config getConfig() {
         return config;
+    }
+
+    public int getFinalTM() {
+        return finalTM;
     }
 
     // -------------------- Setters -------------------- //
@@ -204,8 +209,10 @@ public class Day {
             event = events.get(eventCounter - 1);
 
             // If the business is closed and no clients remain inside, break the cycle.
-            if ((!openBusiness) && (event.getNextDepartureTime() == 9999))
+            if ((!openBusiness) && (event.getNextDepartureTime() == 9999)) {
+                finalTM = event.getTM();
                 break;
+            }
 
             // Comparing next arrival time to next departure time. The lesser will be the next event.
             if (event.getNextArrivalTime() < event.getNextDepartureTime()) {
