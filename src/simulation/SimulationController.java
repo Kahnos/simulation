@@ -1,19 +1,15 @@
 package simulation;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
-import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.*;
@@ -24,7 +20,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -39,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 /**
- * Created by libcorrales y Kahnos on 12/06/2016.
+ * Created by Libny on 12/06/2016.
  */
 public class SimulationController extends HBox {
 
@@ -69,16 +64,15 @@ public class SimulationController extends HBox {
 
     //Charts para las estadísticas
     @FXML private PieChart cantClientsPie;
-
     @FXML private BarChart<String, Number> avgTimeBar;
-    @FXML private CategoryAxis avgTimeBarCategory;
-    @FXML private NumberAxis avgTimeBarNumber;
+    //@FXML private BarChart<String, Number> serverUseBar;
 
-    @FXML private BarChart<String, Number> avgServerBar;
-    @FXML private CategoryAxis avgServerBarCategory;
-    @FXML private NumberAxis avgServerBarNumber;
+    @FXML private TextField simulationDayField;
+    @FXML private Button simulationDayButton;
 
     private Config config;
+    private int daySelected;
+    private ObservableList<Event> eventList = FXCollections.observableArrayList();
 
 
 
@@ -94,6 +88,13 @@ public class SimulationController extends HBox {
         }
     }
 
+    public void simulationDayButtonClicked(){
+        daySelected = Integer.parseInt(simulationDayField.getText());
+        eventList.clear();
+        eventList.addAll(simulation.getDays().get(daySelected).getEvents());
+//        simulationTable.setItems(eventList);
+    }
+
     public void display(Config config, Boolean simulationTableCheck){
         Stage window = new Stage();
         window.setResizable(false);
@@ -103,7 +104,6 @@ public class SimulationController extends HBox {
 
         statisticsVB.setPadding(new Insets(0,0,0,20));
 
-        ObservableList<Event> eventList = FXCollections.observableArrayList();
         eventList.addAll(simulation.getDays().get(0).getEvents());
 
         //Creación de las columnas de la tabla de simulación
@@ -173,7 +173,7 @@ public class SimulationController extends HBox {
 
         //PieChart para la cantidad de clientes
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
-        pieChartData.addAll(new PieChart.Data("Con espera: " + simulation.countClientsWithWait(), simulation.countClientsWithWait()),
+        pieChartData.addAll(new PieChart.Data("Con espera" + simulation.countClientsWithWait(), simulation.countClientsWithWait()),
                 new PieChart.Data("Sin espera: "+ simulation.countClientsWithoutWait(), simulation.countClientsWithoutWait()),
                 new PieChart.Data("Se van sin ser atendidos: " + simulation.countLostClients(), simulation.countLostClients()));
 
@@ -184,123 +184,52 @@ public class SimulationController extends HBox {
         cantClientsPie.setLegendVisible(true);
         cantClientsPie.setLabelsVisible(false);
 
-        // BarChart para promedio de tiempo
-        ObservableList<XYChart.Series<String, Number>> timeChartData = FXCollections.observableArrayList();
-        ArrayList<BarChart.Series<String, Number>> timeBarSeries = new ArrayList<>(5);
-        for (int i = 0; i < 5; i++) {
-            timeBarSeries.add(new BarChart.Series<String, Number>());
-        }
+        //BarChart para promedio de tiempo
+        final NumberAxis yAxis = new NumberAxis();
+        final CategoryAxis xAxis = new CategoryAxis();
 
-        timeBarSeries.get(0).setName("En sistema");
-        timeBarSeries.get(0).getData().add(new XYChart.Data<String, Number>("", simulation.calculateTotalClientTime()));
+        avgTimeBar.setTitle("Tiempo promedio");
+        yAxis.setLabel("Tiempo");
 
-        timeBarSeries.get(1).setName("En cola");
-        timeBarSeries.get(1).getData().add(new XYChart.Data<String, Number>("", simulation.calculateClientWaitTime()));
+        ObservableList<XYChart.Series<String, Number>> barChartData = FXCollections.observableArrayList();
+        final BarChart.Series<String, Number> series1 =  new BarChart.Series<String, Number>();
+        series1.setName("Tiempo promedio");
+        series1.getData().add(new XYChart.Data<String, Number>("En sistema", simulation.calculateTotalClientTime()));
+        series1.getData().add(new XYChart.Data<String, Number>("En cola", simulation.calculateClientWaitTime()));
+        series1.getData().add(new XYChart.Data<String, Number>("En sistema cuando hace cola", simulation.calculateTotalWaitingClientTime()));
+        series1.getData().add(new XYChart.Data<String, Number>("En sistema cuando no hace cola", simulation.calculateTotalNonWaitingClientTime()));
+        series1.getData().add(new XYChart.Data<String, Number>("Trabajo extra del negocio", simulation.calculateExtraWorkTime()));
 
-        timeBarSeries.get(2).setName("En sistema cuando hace cola");
-        timeBarSeries.get(2).getData().add(new XYChart.Data<String, Number>("",
-                simulation.calculateTotalWaitingClientTime()));
-
-        timeBarSeries.get(3).setName("En sistema cuando no hace cola");
-        timeBarSeries.get(3).getData().add(new XYChart.Data<String, Number>("",
-                simulation.calculateTotalNonWaitingClientTime()));
-
-        timeBarSeries.get(4).setName("Trabajo extra del negocio");
-        timeBarSeries.get(4).getData().add(new XYChart.Data<String, Number>("",
-                simulation.calculateExtraWorkTime()));
-
-        // Aplica el label en el tope a cada barra del bar chart.
-        for (BarChart.Series<String, Number> serie: timeBarSeries) {
-            for (final XYChart.Data<String, Number> data : serie.getData()) {
-                data.nodeProperty().addListener(new ChangeListener<Node>() {
-                    @Override public void changed(ObservableValue<? extends Node> ov, Node oldNode, final Node node) {
-                        if (node != null) {
-                            displayLabelForData(data);
-                        }
-                    }
-                });
-            }
-        }
-
-        avgTimeBar.setTitle("Tiempo promedio (Minutos)");
-        avgTimeBarNumber.setLabel("Minutos");
-        avgTimeBar.setLegendSide(Side.BOTTOM);
-        avgTimeBar.setLegendVisible(true);
-        timeChartData.addAll(timeBarSeries);
-        avgTimeBar.setData(timeChartData);
-
-        // Bar chart de los servidores
-        ObservableList<XYChart.Series<String, Number>> serverChartData = FXCollections.observableArrayList();
-        ArrayList<BarChart.Series<String, Number>> serverBarSeries = new ArrayList<>(config.getServerAmount() + 1);
-        for (int i = 0; i < config.getServerAmount(); i++) {
-            serverBarSeries.add(new BarChart.Series<String, Number>());
-            serverBarSeries.get(i).setName("S" + i);
-            serverBarSeries.get(i).getData().add(new XYChart.Data<String, Number>("",
-                    simulation.calculateServerUseTime(i) * 100));
-        }
-
-        serverBarSeries.add(new BarChart.Series<String, Number>());
-        serverBarSeries.get(serverBarSeries.size() - 1).setName("General");
-        serverBarSeries.get(serverBarSeries.size() - 1).getData().add(new XYChart.Data<String, Number>("",
-                simulation.calculateAllServersUseTime() * 100));
-
-        // Aplica el label en el tope a cada barra del bar chart.
-        for (BarChart.Series<String, Number> serie: serverBarSeries) {
-            for (final XYChart.Data<String, Number> data : serie.getData()) {
-                data.nodeProperty().addListener(new ChangeListener<Node>() {
-                    @Override public void changed(ObservableValue<? extends Node> ov, Node oldNode, final Node node) {
-                        if (node != null) {
-                            displayLabelForData(data);
-                        }
-                    }
-                });
-            }
-        }
-
-        avgServerBar.setTitle("Porcentaje de uso");
-        avgServerBarNumber.setLabel("Porcentaje");
-        avgServerBar.setLegendSide(Side.BOTTOM);
-        avgServerBar.setLegendVisible(true);
-        serverChartData.addAll(serverBarSeries);
-        avgServerBar.setData(serverChartData);
+        barChartData.add(series1);
+        avgTimeBar.setData(barChartData);
 
         //ListView para las estadísticas
-        ObservableList<Double> statistics;
-        statistics = FXCollections.observableList(simulation.getAllStatistics());
-        //statisticsListView.setItems(statistics);
-        statisticsListView.setMouseTransparent(true);
+        ObservableList<String> statistics = FXCollections.observableArrayList();
+        statistics.addAll("Promedio de clientes en el sitema: " + String.valueOf(simulation.countClients()),
+                          "Probabilidad de esperar: " + String.valueOf(simulation.getWaitProbability()),
+                          "Clientes con espera: " + String.valueOf(simulation.countClientsWithWait()),
+                          "Clientes sin espera: " + String.valueOf(simulation.countClientsWithoutWait()),
+                          "Clientes que se van sin ser atendidos: " + String.valueOf(simulation.countLostClients()),
+                          "Tiempo promedio de los clientes en el sistema: " + String.valueOf(simulation.calculateTotalClientTime()),
+                          "Tiempo promedio que un cliente está en cola: " + String.valueOf(simulation.calculateClientWaitTime()),
+                          "Tiempo promedio en el sitema de un cliente que hace cola: " + String.valueOf(simulation.calculateTotalWaitingClientTime()),
+                          "Tiempo promedio en el sitema de un cliente que no hace cola: " + String.valueOf(simulation.calculateTotalNonWaitingClientTime()),
+                          "Tiempo promedio adicional de trabajo del negocio: " + String.valueOf(simulation.calculateExtraWorkTime()),
+                          "Porcentaje de utilización de todos los servidores: " + String.valueOf(simulation.calculateAllServersUseTime()),
+                          "Porcentaje de utilización del servidor"
+                          );
+
+        statisticsListView.setItems(statistics);
+   /*     statisticsListView.setMouseTransparent(true);
         statisticsListView.setFocusTraversable(false);
-    }
-
-    /**
-     * Displays label on top of bars in the bar charts.
-     * Code taken from: jewelsea http://stackoverflow.com/questions/15237192/how-to-display-bar-value-on-top-of-bar-javafx
-     * @param data
-     */
-    private void displayLabelForData(XYChart.Data<String, Number> data) {
-        final Node node = data.getNode();
-        final Text dataText = new Text(data.getYValue() + "");
-        node.parentProperty().addListener(new ChangeListener<Parent>() {
-            @Override public void changed(ObservableValue<? extends Parent> ov, Parent oldParent, Parent parent) {
-                Group parentGroup = (Group) parent;
-                parentGroup.getChildren().add(dataText);
-            }
-        });
-
-        node.boundsInParentProperty().addListener(new ChangeListener<Bounds>() {
-            @Override public void changed(ObservableValue<? extends Bounds> ov, Bounds oldBounds, Bounds bounds) {
-                dataText.setLayoutX(
-                    Math.round(
-                        bounds.getMinX() + bounds.getWidth() / 2 - dataText.prefWidth(-1) / 2
-                    )
-                );
-                dataText.setLayoutY(
-                    Math.round(
-                        bounds.getMinY() - dataText.prefHeight(-1) * 0.5
-                    )
-                );
-            }
-        });
+*/
+        //Recomendación cuando el tiempo de espera es mayor a 15 minutos
+        if (simulation.calculateClientWaitTime()>15){
+            AlertBox.display("Advertencia: Objetivo no cumplido", "Se recomienda agregar más trabajadores, mejorar su desempeño o limitar la llegada de clientes estableciendo citas");
+        }
+        else{
+            AlertBox.display("Objetivo cumplido", "El objetivo se cumple. Los clientes no esperan más de 15minutos para ser atendidos");
+        }
     }
 
 }
