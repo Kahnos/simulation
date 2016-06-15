@@ -21,7 +21,6 @@ public class Main extends Application {
         window.setResizable(false);
     }
 
-
     public static void main(String[] args) {
         launch(args);
     }
