@@ -286,6 +286,9 @@ public class ConfigurationController implements Initializable {
         ArrayList<TimeDistribution> serviceTableItems = new ArrayList<>();
         serviceTableItems.addAll(serviceTable.getItems());
 
+        config.setArrivalDistribution(arrivalTableItems);
+        config.setServiceDistribution(serviceTableItems);
+
         if ((TimeDistribution.verifyProbabilities(arrivalTableItems)==1) && (TimeDistribution.verifyProbabilities(serviceTableItems)==1)){
             SimulationController sc = new SimulationController();
             sc.display(config,simulationTableCheck.isSelected());
