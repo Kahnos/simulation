@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 /**
- * Created by Libny on 12/06/2016.
+ * Created by libcorrales y Kahnos on 12/06/2016.
  */
 public class SimulationController extends HBox {
 
@@ -69,8 +69,14 @@ public class SimulationController extends HBox {
 
     //Charts para las estadísticas
     @FXML private PieChart cantClientsPie;
+
     @FXML private BarChart<String, Number> avgTimeBar;
-    //@FXML private BarChart<String, Number> serverUseBar;
+    @FXML private CategoryAxis avgTimeBarCategory;
+    @FXML private NumberAxis avgTimeBarNumber;
+
+    @FXML private BarChart<String, Number> avgServerBar;
+    @FXML private CategoryAxis avgServerBarCategory;
+    @FXML private NumberAxis avgServerBarNumber;
 
     private Config config;
 
@@ -178,39 +184,85 @@ public class SimulationController extends HBox {
         cantClientsPie.setLegendVisible(true);
         cantClientsPie.setLabelsVisible(false);
 
-        //BarChart para promedio de tiempo
-        final NumberAxis yAxis = new NumberAxis();
-        final CategoryAxis xAxis = new CategoryAxis();
-
-        avgTimeBar.setTitle("Tiempo promedio (Minutos)");
-        avgTimeBar.setVerticalGridLinesVisible(true);
-        avgTimeBar.setHorizontalGridLinesVisible(true);
-        avgTimeBar.setTitle("Test");
-        xAxis.setLabel("X");
-        yAxis.setLabel("Y");
-
-        ObservableList<XYChart.Series<String, Number>> barChartData = FXCollections.observableArrayList();
-        final BarChart.Series<String, Number> timeBarSerie =  new BarChart.Series<String, Number>();
-        timeBarSerie.setName("Tiempo promedio");
-        timeBarSerie.getData().add(new XYChart.Data<String, Number>("En sistema", simulation.calculateTotalClientTime()));
-        timeBarSerie.getData().add(new XYChart.Data<String, Number>("En cola", simulation.calculateClientWaitTime()));
-        timeBarSerie.getData().add(new XYChart.Data<String, Number>("En sistema cuando hace cola", simulation.calculateTotalWaitingClientTime()));
-        timeBarSerie.getData().add(new XYChart.Data<String, Number>("En sistema cuando no hace cola", simulation.calculateTotalNonWaitingClientTime()));
-        timeBarSerie.getData().add(new XYChart.Data<String, Number>("Trabajo extra del negocio", simulation.calculateExtraWorkTime()));
-
-        // Aplica el label en el tope a cada barra del bar chart.
-        for (final XYChart.Data<String, Number> data : timeBarSerie.getData()) {
-            data.nodeProperty().addListener(new ChangeListener<Node>() {
-                @Override public void changed(ObservableValue<? extends Node> ov, Node oldNode, final Node node) {
-                    if (node != null) {
-                        displayLabelForData(data);
-                    }
-                }
-            });
+        // BarChart para promedio de tiempo
+        ObservableList<XYChart.Series<String, Number>> timeChartData = FXCollections.observableArrayList();
+        ArrayList<BarChart.Series<String, Number>> timeBarSeries = new ArrayList<>(5);
+        for (int i = 0; i < 5; i++) {
+            timeBarSeries.add(new BarChart.Series<String, Number>());
         }
 
-        barChartData.add(timeBarSerie);
-        avgTimeBar.setData(barChartData);
+        timeBarSeries.get(0).setName("En sistema");
+        timeBarSeries.get(0).getData().add(new XYChart.Data<String, Number>("", simulation.calculateTotalClientTime()));
+
+        timeBarSeries.get(1).setName("En cola");
+        timeBarSeries.get(1).getData().add(new XYChart.Data<String, Number>("", simulation.calculateClientWaitTime()));
+
+        timeBarSeries.get(2).setName("En sistema cuando hace cola");
+        timeBarSeries.get(2).getData().add(new XYChart.Data<String, Number>("",
+                simulation.calculateTotalWaitingClientTime()));
+
+        timeBarSeries.get(3).setName("En sistema cuando no hace cola");
+        timeBarSeries.get(3).getData().add(new XYChart.Data<String, Number>("",
+                simulation.calculateTotalNonWaitingClientTime()));
+
+        timeBarSeries.get(4).setName("Trabajo extra del negocio");
+        timeBarSeries.get(4).getData().add(new XYChart.Data<String, Number>("",
+                simulation.calculateExtraWorkTime()));
+
+        // Aplica el label en el tope a cada barra del bar chart.
+        for (BarChart.Series<String, Number> serie: timeBarSeries) {
+            for (final XYChart.Data<String, Number> data : serie.getData()) {
+                data.nodeProperty().addListener(new ChangeListener<Node>() {
+                    @Override public void changed(ObservableValue<? extends Node> ov, Node oldNode, final Node node) {
+                        if (node != null) {
+                            displayLabelForData(data);
+                        }
+                    }
+                });
+            }
+        }
+
+        avgTimeBar.setTitle("Tiempo promedio (Minutos)");
+        avgTimeBarNumber.setLabel("Minutos");
+        avgTimeBar.setLegendSide(Side.BOTTOM);
+        avgTimeBar.setLegendVisible(true);
+        timeChartData.addAll(timeBarSeries);
+        avgTimeBar.setData(timeChartData);
+
+        // Bar chart de los servidores
+        ObservableList<XYChart.Series<String, Number>> serverChartData = FXCollections.observableArrayList();
+        ArrayList<BarChart.Series<String, Number>> serverBarSeries = new ArrayList<>(config.getServerAmount() + 1);
+        for (int i = 0; i < config.getServerAmount(); i++) {
+            serverBarSeries.add(new BarChart.Series<String, Number>());
+            serverBarSeries.get(i).setName("S" + i);
+            serverBarSeries.get(i).getData().add(new XYChart.Data<String, Number>("",
+                    simulation.calculateServerUseTime(i) * 100));
+        }
+
+        serverBarSeries.add(new BarChart.Series<String, Number>());
+        serverBarSeries.get(serverBarSeries.size() - 1).setName("General");
+        serverBarSeries.get(serverBarSeries.size() - 1).getData().add(new XYChart.Data<String, Number>("",
+                simulation.calculateAllServersUseTime() * 100));
+
+        // Aplica el label en el tope a cada barra del bar chart.
+        for (BarChart.Series<String, Number> serie: serverBarSeries) {
+            for (final XYChart.Data<String, Number> data : serie.getData()) {
+                data.nodeProperty().addListener(new ChangeListener<Node>() {
+                    @Override public void changed(ObservableValue<? extends Node> ov, Node oldNode, final Node node) {
+                        if (node != null) {
+                            displayLabelForData(data);
+                        }
+                    }
+                });
+            }
+        }
+
+        avgServerBar.setTitle("Porcentaje de uso");
+        avgServerBarNumber.setLabel("Porcentaje");
+        avgServerBar.setLegendSide(Side.BOTTOM);
+        avgServerBar.setLegendVisible(true);
+        serverChartData.addAll(serverBarSeries);
+        avgServerBar.setData(serverChartData);
 
         //ListView para las estadísticas
         ObservableList<Double> statistics;
@@ -238,14 +290,14 @@ public class SimulationController extends HBox {
         node.boundsInParentProperty().addListener(new ChangeListener<Bounds>() {
             @Override public void changed(ObservableValue<? extends Bounds> ov, Bounds oldBounds, Bounds bounds) {
                 dataText.setLayoutX(
-                        Math.round(
-                                bounds.getMinX() + bounds.getWidth() / 2 - dataText.prefWidth(-1) / 2
-                        )
+                    Math.round(
+                        bounds.getMinX() + bounds.getWidth() / 2 - dataText.prefWidth(-1) / 2
+                    )
                 );
                 dataText.setLayoutY(
-                        Math.round(
-                                bounds.getMinY() - dataText.prefHeight(-1) * 0.5
-                        )
+                    Math.round(
+                        bounds.getMinY() - dataText.prefHeight(-1) * 0.5
+                    )
                 );
             }
         });

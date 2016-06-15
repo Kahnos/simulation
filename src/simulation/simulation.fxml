@@ -20,16 +20,23 @@
                             <ScrollPane fitToHeight="true" fitToWidth="true">
                                 <VBox minWidth="600">
                                     <children>
-                                        <PieChart fx:id="cantClientsPie"></PieChart>
-                                       <BarChart fx:id="avgTimeBar">
-                                           <xAxis>
-                                               <CategoryAxis side="BOTTOM" />
-                                           </xAxis>
-                                           <yAxis>
-                                               <NumberAxis side="LEFT" />
-                                           </yAxis>
-                                       </BarChart>
-                                        <!--  <BarChart fx:id="serverUseBar"></BarChart>-->
+                                        <PieChart fx:id="cantClientsPie" minHeight="300" maxWidth="500"></PieChart>
+                                        <BarChart fx:id="avgTimeBar" minHeight="300" maxWidth="500">
+                                            <xAxis>
+                                                <CategoryAxis side="BOTTOM" fx:id="avgTimeBarCategory"/>
+                                            </xAxis>
+                                            <yAxis>
+                                                <NumberAxis side="LEFT" fx:id="avgTimeBarNumber"/>
+                                            </yAxis>
+                                        </BarChart>
+                                        <BarChart fx:id="avgServerBar" minHeight="300" maxWidth="500">
+                                            <xAxis>
+                                                <CategoryAxis side="BOTTOM" fx:id="avgServerBarCategory"/>
+                                            </xAxis>
+                                            <yAxis>
+                                                <NumberAxis side="LEFT" fx:id="avgServerBarNumber"/>
+                                            </yAxis>
+                                        </BarChart>
                                     </children>
                                 </VBox>
                             </ScrollPane>

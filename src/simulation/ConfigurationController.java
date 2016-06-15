@@ -328,7 +328,7 @@ public class ConfigurationController implements Initializable {
         config.setArrivalDistribution(arrivalTableItems);
         config.setServiceDistribution(serviceTableItems);
 
-        if ((TimeDistribution.verifyProbabilities(arrivalTableItems)==1) && (TimeDistribution.verifyProbabilities(serviceTableItems)==1)){
+        if ((TimeDistribution.verifyProbabilities(arrivalTableItems)==1) && (TimeDistribution.verifyProbabilities(serviceTableItems)==1)) {
             SimulationController sc = new SimulationController();
             sc.display(config,simulationTableCheck.isSelected());
             Stage primaryStage = (Stage) simulationButton.getScene().getWindow();
