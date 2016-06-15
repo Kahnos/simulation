@@ -1,15 +1,19 @@
 package simulation;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Side;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.*;
@@ -20,6 +24,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -162,7 +167,7 @@ public class SimulationController extends HBox {
 
         //PieChart para la cantidad de clientes
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
-        pieChartData.addAll(new PieChart.Data("Con espera" + simulation.countClientsWithWait(), simulation.countClientsWithWait()),
+        pieChartData.addAll(new PieChart.Data("Con espera: " + simulation.countClientsWithWait(), simulation.countClientsWithWait()),
                 new PieChart.Data("Sin espera: "+ simulation.countClientsWithoutWait(), simulation.countClientsWithoutWait()),
                 new PieChart.Data("Se van sin ser atendidos: " + simulation.countLostClients(), simulation.countLostClients()));
 
@@ -177,19 +182,34 @@ public class SimulationController extends HBox {
         final NumberAxis yAxis = new NumberAxis();
         final CategoryAxis xAxis = new CategoryAxis();
 
-        avgTimeBar.setTitle("Tiempo promedio");
-        yAxis.setLabel("Tiempo");
+        avgTimeBar.setTitle("Tiempo promedio (Minutos)");
+        avgTimeBar.setVerticalGridLinesVisible(true);
+        avgTimeBar.setHorizontalGridLinesVisible(true);
+        avgTimeBar.setTitle("Test");
+        xAxis.setLabel("X");
+        yAxis.setLabel("Y");
 
         ObservableList<XYChart.Series<String, Number>> barChartData = FXCollections.observableArrayList();
-        final BarChart.Series<String, Number> series1 =  new BarChart.Series<String, Number>();
-        series1.setName("Tiempo promedio");
-        series1.getData().add(new XYChart.Data<String, Number>("En sistema", simulation.calculateTotalClientTime()));
-        series1.getData().add(new XYChart.Data<String, Number>("En cola", simulation.calculateClientWaitTime()));
-        series1.getData().add(new XYChart.Data<String, Number>("En sistema cuando hace cola", simulation.calculateTotalWaitingClientTime()));
-        series1.getData().add(new XYChart.Data<String, Number>("En sistema cuando no hace cola", simulation.calculateTotalNonWaitingClientTime()));
-        series1.getData().add(new XYChart.Data<String, Number>("Trabajo extra del negocio", simulation.calculateExtraWorkTime()));
+        final BarChart.Series<String, Number> timeBarSerie =  new BarChart.Series<String, Number>();
+        timeBarSerie.setName("Tiempo promedio");
+        timeBarSerie.getData().add(new XYChart.Data<String, Number>("En sistema", simulation.calculateTotalClientTime()));
+        timeBarSerie.getData().add(new XYChart.Data<String, Number>("En cola", simulation.calculateClientWaitTime()));
+        timeBarSerie.getData().add(new XYChart.Data<String, Number>("En sistema cuando hace cola", simulation.calculateTotalWaitingClientTime()));
+        timeBarSerie.getData().add(new XYChart.Data<String, Number>("En sistema cuando no hace cola", simulation.calculateTotalNonWaitingClientTime()));
+        timeBarSerie.getData().add(new XYChart.Data<String, Number>("Trabajo extra del negocio", simulation.calculateExtraWorkTime()));
 
-        barChartData.add(series1);
+        // Aplica el label en el tope a cada barra del bar chart.
+        for (final XYChart.Data<String, Number> data : timeBarSerie.getData()) {
+            data.nodeProperty().addListener(new ChangeListener<Node>() {
+                @Override public void changed(ObservableValue<? extends Node> ov, Node oldNode, final Node node) {
+                    if (node != null) {
+                        displayLabelForData(data);
+                    }
+                }
+            });
+        }
+
+        barChartData.add(timeBarSerie);
         avgTimeBar.setData(barChartData);
 
         //ListView para las estadísticas
@@ -198,6 +218,37 @@ public class SimulationController extends HBox {
         //statisticsListView.setItems(statistics);
         statisticsListView.setMouseTransparent(true);
         statisticsListView.setFocusTraversable(false);
+    }
+
+    /**
+     * Displays label on top of bars in the bar charts.
+     * Code taken from: jewelsea http://stackoverflow.com/questions/15237192/how-to-display-bar-value-on-top-of-bar-javafx
+     * @param data
+     */
+    private void displayLabelForData(XYChart.Data<String, Number> data) {
+        final Node node = data.getNode();
+        final Text dataText = new Text(data.getYValue() + "");
+        node.parentProperty().addListener(new ChangeListener<Parent>() {
+            @Override public void changed(ObservableValue<? extends Parent> ov, Parent oldParent, Parent parent) {
+                Group parentGroup = (Group) parent;
+                parentGroup.getChildren().add(dataText);
+            }
+        });
+
+        node.boundsInParentProperty().addListener(new ChangeListener<Bounds>() {
+            @Override public void changed(ObservableValue<? extends Bounds> ov, Bounds oldBounds, Bounds bounds) {
+                dataText.setLayoutX(
+                        Math.round(
+                                bounds.getMinX() + bounds.getWidth() / 2 - dataText.prefWidth(-1) / 2
+                        )
+                );
+                dataText.setLayoutY(
+                        Math.round(
+                                bounds.getMinY() - dataText.prefHeight(-1) * 0.5
+                        )
+                );
+            }
+        });
     }
 
 }
