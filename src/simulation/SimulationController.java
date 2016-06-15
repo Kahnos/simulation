@@ -7,6 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -35,10 +36,13 @@ import java.util.ResourceBundle;
 /**
  * Created by Libny on 12/06/2016.
  */
-public class SimulationController extends VBox {
+public class SimulationController extends HBox {
 
     @FXML private Pane mainPanel;
-    @FXML private Label q;
+    @FXML private VBox vb;
+    @FXML private Label title;
+    @FXML private Label label2;
+    @FXML private ListView<String> statisticsListView;
 
     //Simulation table
     @FXML private TableView<Event> simulationTable;
@@ -70,6 +74,7 @@ public class SimulationController extends VBox {
         Stage window = new Stage();
 
         this.config = config;
+        window.setResizable(false);
 
         // Test day
         Day testDay = getTestDay();
@@ -126,6 +131,8 @@ public class SimulationController extends VBox {
         simulationTable.getColumns().addAll(waitlineColumn,totalClientsColumn, atColumn, dtColumn);
 
         simulationTable.setItems(eventList);
+//        simulationTable.setMouseTransparent(true);
+        simulationTable.setFocusTraversable(false);
 //        simulationTable.setManaged(false);
 //        mainPanel.getChildren().remove(simulationTable);
 
@@ -133,19 +140,28 @@ public class SimulationController extends VBox {
 //        window.setTitle("mediConsulta - Agregar paciente");
 //        window.setMinWidth(250);
 //
-        VBox vb = new VBox();
-        vb.getChildren().addAll(mainPanel);
+        HBox hb = new HBox();
+        hb.getChildren().addAll(mainPanel);
 
 //        vb.getChildren().addAll();
-        vb.setAlignment(Pos.CENTER);
-        Scene scene = new Scene(vb);
+        hb.setAlignment(Pos.CENTER);
+        Scene scene = new Scene(hb);
         window.setScene(scene);
         window.show();
 
+        title.setText("Estadísticas");
+        title.setPadding(new Insets(10, 0, 10, 20)); //arriba, derecha, abajo, izquierda
+//        label2.setText("Prueba 2");
+//        label2.setPadding(new Insets(10, 0, 0, 20));
 
+        ObservableList<String> statistics = FXCollections.observableArrayList();
 
+        //statisticsListView.setPrefSize(200, 250);
 
-
+        statistics.addAll("A", "B", "C", "D", "E");
+        statisticsListView.setItems(statistics);
+        statisticsListView.setMouseTransparent(true);
+        statisticsListView.setFocusTraversable(false);
     }
 
     public static Day getTestDay() {

@@ -15,9 +15,10 @@ public class Main extends Application {
     @Override
     public void start(Stage window) throws Exception{
         /*Parent configFXML = FXMLLoader.load(getClass().getResource("configuration.fxml"));
-        window.setTitle("Simulación");
-        window.setScene(new Scene(configFXML, 800, 600));
-        window.show();*/
+        window.setTitle("Configuración de la simulación");
+        window.setScene(new Scene(configFXML, 530, 600));
+        window.show();
+        window.setResizable(false);*/
 
         // Test config.
         /*ArrayList<TimeDistribution> arrivalDistribution = new ArrayList<>();
@@ -37,7 +38,6 @@ public class Main extends Application {
 
         // Test config when reading from file.
         Config config = Config.readConfigFromFile("./test/Configuration - Example.txt");
-
         config.setAllMinMax();
 
         Simulation simulation = new Simulation(config);
