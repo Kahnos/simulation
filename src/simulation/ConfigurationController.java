@@ -1,4 +1,7 @@
 package simulation;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -7,8 +10,11 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,17 +31,18 @@ public class ConfigurationController implements Initializable {
 
     @FXML ImageView logo;
 
-
-
     @FXML private Spinner<Integer> serversSpinner = new Spinner<>();
+    //SpinnerValueFactory del spinner de los servidores
     SpinnerValueFactory svfServers = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100);
-    @FXML private Spinner<Integer> clientsSpinner = new Spinner<>();
-    SpinnerValueFactory svfClients = new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 1000);
 
-    SpinnerValueFactory svfInt = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000);
+    @FXML private Spinner<Integer> clientsSpinner = new Spinner<>();
+    //SpinnerValueFactory del spinner de los clientes
+    SpinnerValueFactory svfClients = new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 1000);
 
     @FXML private Spinner<Integer> openTimeSpinner = new Spinner<>();
     @FXML private Spinner<Integer> simulationDaysSpinner = new Spinner<>();
+    //SpinnerValueFactory para spinners que tengan como valor inicial 1
+    SpinnerValueFactory svfInt = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000);
 
     //Distribution time table
     @FXML private TableView<TimeDistribution> arrivalTable;
@@ -79,17 +86,69 @@ public class ConfigurationController implements Initializable {
         //        timeColumnArrival.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
         serversSpinner.setEditable(true);
         serversSpinner.setValueFactory(svfServers);
+        addSpinnerEvents(serversSpinner);
 
         clientsSpinner.setEditable(true);
         clientsSpinner.setValueFactory(svfClients);
+        addSpinnerEvents(clientsSpinner);
 
         openTimeSpinner.setEditable(true);
         openTimeSpinner.setValueFactory(svfInt);
+        addSpinnerEvents(openTimeSpinner);
 
         simulationDaysSpinner.setEditable(true);
         simulationDaysSpinner.setValueFactory(svfInt);
+        addSpinnerEvents(simulationDaysSpinner);
     }
 
+    /**
+     * Sets the events on the spinners when the user enters or tabs text.
+     * @param spinner contains the spinner.
+     * Code from José Pereda. Modified by Kahnos. http://stackoverflow.com/questions/27433899/spinner-control-value
+     */
+    private void addSpinnerEvents(Spinner spinner) {
+        // Commit on TAB
+        spinner.addEventFilter(KeyEvent.ANY, e->{
+            if (spinner.isEditable() && e.getCode().equals(KeyCode.TAB)) {
+                doCommit(spinner);
+                e.consume();
+            }
+        });
+
+        // Override Commit on ENTER
+        spinner.getEditor().setOnAction(e->{
+            if(spinner.isEditable()) {
+                doCommit(spinner);
+                e.consume();
+            }
+        });
+
+        spinner.getEditor().focusedProperty().addListener((OV, oldPropertyValue, newPropertyValue) -> {
+            if (!newPropertyValue) {
+                doCommit(spinner);
+            }
+        });
+    }
+
+    /**
+     * Commit new value, checking conversion to integer, restoring old valid value in case of exception
+     * Code from José Pereda. http://stackoverflow.com/questions/27433899/spinner-control-value
+     */
+    private void doCommit(Spinner spinner) {
+        String text = spinner.getEditor().getText();
+        SpinnerValueFactory<Integer> valueFactory = spinner.getValueFactory();
+        if (valueFactory != null) {
+            StringConverter<Integer> converter = valueFactory.getConverter();
+            if (converter != null) {
+                try{
+                    Integer value = converter.fromString(text);
+                    valueFactory.setValue(value);
+                } catch(NumberFormatException nfe){
+                    spinner.getEditor().setText(converter.toString(valueFactory.getValue()));
+                }
+            }
+        }
+    }
 
     public void fileButtonClicked() {
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Text Files", "*.txt"));

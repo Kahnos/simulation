@@ -178,7 +178,39 @@ public class Config {
 
         return config;
     }
-    
+
+    /**
+     * Checks if a number is double.
+     * @param string contains the double string.
+     * @return true if it is, false if not.
+     */
+    public static boolean isDouble(String string){
+        try {
+            Double.parseDouble(string);
+        }
+        catch(NumberFormatException nfe)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Checks if a number is integer.
+     * @param string contains the int string.
+     * @return true if it is, false if not.
+     */
+    public static boolean isInt(String string){
+        try {
+            Integer.parseInt(string);
+        }
+        catch(NumberFormatException nfe)
+        {
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public String toString() {
         StringBuilder string = new StringBuilder();
