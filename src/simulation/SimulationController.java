@@ -13,6 +13,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.Chart;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -41,7 +42,7 @@ public class SimulationController extends HBox {
     @FXML private Pane mainPanel;
     @FXML private VBox vb;
     @FXML private Label title;
-    @FXML private Label label2;
+    @FXML private Label cantClientsLabel;
     @FXML private ListView<String> statisticsListView;
 
     //Simulation table
@@ -50,13 +51,20 @@ public class SimulationController extends HBox {
     @FXML private TableColumn<Event, String> typeColumn = new TableColumn<>();
     @FXML private TableColumn<Event, Integer> clientColumn = new TableColumn<>();
     @FXML private TableColumn<Event, Integer> tmColumn = new TableColumn<>();
+
     //servidores
     @FXML private TableColumn<Event, Integer> waitlineColumn = new TableColumn<>();
     @FXML private TableColumn<Event, Integer> totalClientsColumn = new TableColumn<>();
     @FXML private TableColumn<Event, Integer> atColumn = new TableColumn<>();
     @FXML private TableColumn<Event, Integer> dtColumn = new TableColumn<>();
     @FXML private TableColumn<Event, Integer> [] tableColumns;
+
+    //Charts para las estadísticas
+    PieChart cantCLientsPie;
+
     private Config config;
+
+
 
     public SimulationController() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("simulation.fxml"));
@@ -70,7 +78,7 @@ public class SimulationController extends HBox {
         }
     }
 
-    public void display(Config config){
+    public void display(Config config, Boolean simulationTableCheck){
         Stage window = new Stage();
 
         this.config = config;
@@ -131,19 +139,14 @@ public class SimulationController extends HBox {
         simulationTable.getColumns().addAll(waitlineColumn,totalClientsColumn, atColumn, dtColumn);
 
         simulationTable.setItems(eventList);
-//        simulationTable.setMouseTransparent(true);
         simulationTable.setFocusTraversable(false);
-//        simulationTable.setManaged(false);
-//        mainPanel.getChildren().remove(simulationTable);
+        if (!simulationTableCheck){
+            simulationTable.setManaged(false);
+        }
 
-//        window.initModality(Modality.APPLICATION_MODAL);
-//        window.setTitle("mediConsulta - Agregar paciente");
-//        window.setMinWidth(250);
-//
         HBox hb = new HBox();
         hb.getChildren().addAll(mainPanel);
 
-//        vb.getChildren().addAll();
         hb.setAlignment(Pos.CENTER);
         Scene scene = new Scene(hb);
         window.setScene(scene);
@@ -151,17 +154,15 @@ public class SimulationController extends HBox {
 
         title.setText("Estadísticas");
         title.setPadding(new Insets(10, 0, 10, 20)); //arriba, derecha, abajo, izquierda
-//        label2.setText("Prueba 2");
-//        label2.setPadding(new Insets(10, 0, 0, 20));
+        cantClientsLabel.setPadding(new Insets(10,0,0,20));
 
-        ObservableList<String> statistics = FXCollections.observableArrayList();
 
-        //statisticsListView.setPrefSize(200, 250);
-
-        statistics.addAll("A", "B", "C", "D", "E");
+        //ListView para las estadísticas
+/*        ObservableList<Double> statistics;
+        statistics = FXCollections.observableList();
         statisticsListView.setItems(statistics);
         statisticsListView.setMouseTransparent(true);
-        statisticsListView.setFocusTraversable(false);
+        statisticsListView.setFocusTraversable(false);*/
     }
 
     public static Day getTestDay() {

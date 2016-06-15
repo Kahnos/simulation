@@ -13,7 +13,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="550.0" spacing="20.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="simulation.ConfigurationController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="550.0" spacing="20.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="simulation.ConfigurationController">
    <children>
       <HBox prefHeight="100.0" prefWidth="200.0">
          <children>
@@ -24,6 +24,11 @@
                </HBox.margin></Label>
          </children>
       </HBox>
+      <Pane prefHeight="200.0" prefWidth="200.0">
+         <children>
+            <CheckBox fx:id="simulationTableCheck" mnemonicParsing="false" text="Mostrar tabla de simulación" />
+         </children>
+      </Pane>
       <HBox spacing="10.0">
          <children>
             <Label prefWidth="125.0" text="Cargar desde archivo" />
@@ -35,7 +40,7 @@
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin></Label>
-            <Button mnemonicParsing="false" prefWidth="100.0" text="Guardar archivo">
+            <Button fx:id="saveFileButton" mnemonicParsing="false" onAction="#saveFileButtonClicked" prefWidth="100.0" text="Guardar archivo">
                <font>
                   <Font size="11.0" />
                </font></Button>

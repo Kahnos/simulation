@@ -20,28 +20,6 @@ public class Main extends Application {
         window.show();
         window.setResizable(false);
 
-        // Test config.
-        /*ArrayList<TimeDistribution> arrivalDistribution = new ArrayList<>();
-        arrivalDistribution.add(new TimeDistribution(3, 0.5, arrivalDistribution));
-        arrivalDistribution.add(new TimeDistribution(6, 0.2, arrivalDistribution));
-        arrivalDistribution.add(new TimeDistribution(9, 0.15, arrivalDistribution));
-        arrivalDistribution.add(new TimeDistribution(10, 0.15, arrivalDistribution));
-
-        ArrayList<TimeDistribution> serviceDistribution = new ArrayList<>();
-        serviceDistribution.add(new TimeDistribution(14, 0.25, serviceDistribution));
-        serviceDistribution.add(new TimeDistribution(18, 0.25, serviceDistribution));
-        serviceDistribution.add(new TimeDistribution(12, 0.25, serviceDistribution));
-        serviceDistribution.add(new TimeDistribution(10, 0.25, serviceDistribution));
-
-        Config config = new Config(1, 60, 2, 4, arrivalDistribution, serviceDistribution);
-        Config.writeConfigToFile("./test/Saved Configuration - Test.txt", config);*/
-
-        // Test config when reading from file.
-        /*Config config = Config.readConfigFromFile("./test/Configuration - Example.txt");
-        config.setAllMinMax();
-
-        Simulation simulation = new Simulation(config);
-        System.out.println(simulation.toString());*/
     }
 
     public static void main(String[] args) {
