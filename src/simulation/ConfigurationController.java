@@ -40,8 +40,12 @@ public class ConfigurationController implements Initializable {
 
     @FXML private Spinner<Integer> openTimeSpinner = new Spinner<>();
     @FXML private Spinner<Integer> simulationDaysSpinner = new Spinner<>();
-    //SpinnerValueFactory para spinners que tengan como valor inicial 1
-    SpinnerValueFactory svfInt = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000);
+
+    //SpinnerValueFactory para el spinner del tiempo de trabajo
+    SpinnerValueFactory svfOpenTime = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000);
+
+    //SpinnerValueFactory para el spinner de los días de simulación
+    SpinnerValueFactory svfSimulationDays = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000);
 
     //Distribution time table
     @FXML private TableView<TimeDistribution> arrivalTable;
@@ -96,11 +100,11 @@ public class ConfigurationController implements Initializable {
         addEvents(clientsSpinner);
 
         openTimeSpinner.setEditable(true);
-        openTimeSpinner.setValueFactory(svfInt);
+        openTimeSpinner.setValueFactory(svfOpenTime);
         addEvents(openTimeSpinner);
 
         simulationDaysSpinner.setEditable(true);
-        simulationDaysSpinner.setValueFactory(svfInt);
+        simulationDaysSpinner.setValueFactory(svfSimulationDays);
         addEvents(simulationDaysSpinner);
     }
 
