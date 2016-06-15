@@ -260,6 +260,10 @@ public class Simulation {
         return serverTime / config.getServerAmount();
     }
 
+    /**
+     * Calls all the statistical functions and reunites the results in a single arraylist.
+     * @return a double arraylist with all the statistics.
+     */
     public ArrayList<Double> getAllStatistics() {
         ArrayList<Double> statistics = new ArrayList<>();
 

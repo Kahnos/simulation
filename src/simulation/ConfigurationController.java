@@ -1,4 +1,7 @@
 package simulation;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -10,6 +13,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
@@ -20,6 +24,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
 
 
 public class ConfigurationController implements Initializable {
@@ -81,7 +86,7 @@ public class ConfigurationController implements Initializable {
     @FXML private FileChooser fileChooser = new FileChooser();
 
     @Override
-    public void initialize (URL url, ResourceBundle rb){
+    public void initialize (URL url, ResourceBundle rb) {
         File file = new File("./assets/logoUCAB.png");
         Image image = new Image(file.toURI().toString());
         logo.setImage(image);
@@ -106,6 +111,12 @@ public class ConfigurationController implements Initializable {
         simulationDaysSpinner.setEditable(true);
         simulationDaysSpinner.setValueFactory(svfSimulationDays);
         addEvents(simulationDaysSpinner);
+
+        addEvents(arrivalTimeField, "Integer");
+        addEvents(arrivalProbField, "Double");
+
+        addEvents(serviceTimeField, "Integer");
+        addEvents(serviceProbField, "Double");
     }
 
     /**
@@ -135,6 +146,30 @@ public class ConfigurationController implements Initializable {
                 doCommit(spinner);
             }
         });
+    }
+
+    private void addEvents(TextField textField, String type) {
+        if (type.equals("Integer")) {
+            textField.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    if (!newValue.matches("\\d*")) {
+                        textField.setText(newValue.replaceAll("[^\\d]", ""));
+                    }
+                }
+            });
+        }
+
+        if(type.equals("Double")) {
+            textField.textProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    if (!newValue.matches("\\d+\\.\\d+")) {
+                        textField.setText(newValue.replaceAll("[^\\d+\\.\\d+]", ""));
+                    }
+                }
+            });
+        }
     }
 
     /**
