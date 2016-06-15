@@ -136,7 +136,7 @@ public class Config {
      * @param filePath contains the path to the file containing the JSON configuration.
      * @return the parsed Config or null if an error occurs.
      */
-    public static Config readConfigFromFile(String filePath) throws IOException{
+    public static Config readConfigFromFile(String filePath) throws Exception{
         Config config = null;
         Gson gson = new GsonBuilder().create();
 
@@ -155,7 +155,29 @@ public class Config {
         return config;
     }
 
-    // TODO: 14/06/2016 SAVE CONFIG TO FILE
+    /**
+     * Stores the configuration (in JSON format) to a file.
+     * @param filePath contains the path to the file containing the JSON configuration.
+     * @return the parsed Config or null if an error occurs.
+     */
+    public static Config writeConfigToFile(String filePath, Config config) throws Exception{
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String configJson;
+
+        try {
+            // Parsing the JSON string to Config.
+            configJson = gson.toJson(config);
+
+            // Stores the config in JSON format to a file.
+            Files.write(Paths.get(filePath), configJson.getBytes());
+        } catch (IOException e) {
+            System.err.println("Error writing to file " + filePath);
+        } catch (Exception e) {
+            System.err.println("Error: " + e);
+        }
+
+        return config;
+    }
     
     @Override
     public String toString() {

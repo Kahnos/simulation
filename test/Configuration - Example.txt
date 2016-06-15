@@ -1,46 +1,46 @@
 {
-    "simulationDays": "1",
-    "openTime": "60",
-    "serverAmount": "2",
-    "maxClients": "6",
-    "arrivalDistribution": [
-      {
-        "time": "3",
-        "probabilityTotal": "0.5"
-      },
-      {
-        "time": "6",
-        "probabilityTotal": "0.2"
-      },
-      {
-        "time": "9",
-        "probabilityTotal": "0.15"
-      },
-      {
-        "time": "12",
-        "probabilityTotal": "0.05"
-      },
-      {
-        "time": "15",
-        "probabilityTotal": "0.1"
-      }
-    ],
-    "serviceDistribution": [
-      {
-        "time": "10",
-        "probabilityTotal": "0.25"
-      },
-      {
-        "time": "12",
-        "probabilityTotal": "0.25"
-      },
-      {
-        "time": "14",
-        "probabilityTotal": "0.25"
-      },
-      {
-        "time": "18",
-        "probabilityTotal": "0.25"
-      }
-    ]
+  "simulationDays": "1",
+  "openTime": "20",
+  "serverAmount": "2",
+  "maxClients": "6",
+  "arrivalDistribution": [
+    {
+      "time": "3",
+      "probabilityTotal": "0.5"
+    },
+    {
+      "time": "6",
+      "probabilityTotal": "0.2"
+    },
+    {
+      "time": "9",
+      "probabilityTotal": "0.15"
+    },
+    {
+      "time": "12",
+      "probabilityTotal": "0.05"
+    },
+    {
+      "time": "15",
+      "probabilityTotal": "0.1"
+    }
+  ],
+  "serviceDistribution": [
+    {
+      "time": "10",
+      "probabilityTotal": "0.25"
+    },
+    {
+      "time": "12",
+      "probabilityTotal": "0.25"
+    },
+    {
+      "time": "14",
+      "probabilityTotal": "0.25"
+    },
+    {
+      "time": "18",
+      "probabilityTotal": "0.25"
+    }
+  ]
 }

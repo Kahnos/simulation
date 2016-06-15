@@ -44,7 +44,6 @@ public class Simulation {
     }
 
     // -------------------- Statistical functions -------------------- //
-    // TODO: 14/06/2016 Recomendaciones cuando no se cumple el objetivo
 
     /**
      * Counts the clients in the system and returns the average.
@@ -217,7 +216,8 @@ public class Simulation {
         double globalTime = 0;
 
         for (Day day : days) {
-            globalTime += day.getFinalTM() - config.getOpenTime();
+            if (day.getFinalTM() > config.getOpenTime())
+                globalTime += day.getFinalTM() - config.getOpenTime();
         }
 
         return globalTime / config.getSimulationDays();
@@ -272,11 +272,11 @@ public class Simulation {
             string.append(day);
         }
 
+        string.append("Average clients: ").append(countClients()).append("\n");
         string.append("Average clients with wait: ").append(countClientsWithWait()).append("\n");
         string.append("Average clients without wait: ").append(countClientsWithoutWait()).append("\n");
         string.append("Probability that a client waits: ").append(getWaitProbability()).append("\n");
         string.append("Average lost clients: ").append(countLostClients()).append("\n");
-        string.append("Average clients: ").append(countClients()).append("\n");
         string.append("Average client system time: ").append(calculateTotalClientTime()).append("\n");
         string.append("Average client wait time: ").append(calculateClientWaitTime()).append("\n");
         string.append("Average waiting client system time: ").append(calculateTotalWaitingClientTime()).append("\n");
