@@ -1,4 +1,5 @@
 package simulation;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -10,6 +11,7 @@ import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -57,6 +59,10 @@ public class ConfigurationController implements Initializable {
     @FXML private Button addButtonService;
     @FXML private Button deleteButtonService;
     @FXML private Button fileButton;
+    @FXML private Button saveFileButton;
+
+    //CheckBox dela tabla de simulación
+    @FXML private CheckBox simulationTableCheck;
 
     @FXML private Config config = new Config();
 
@@ -91,13 +97,71 @@ public class ConfigurationController implements Initializable {
     }
 
 
-    public void fileButtonClicked() {
+    public void fileButtonClicked() throws Exception {
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
         File selectedFile = fileChooser.showOpenDialog(null);
         if (selectedFile != null){
             System.out.println(selectedFile.getAbsolutePath());
+            config = Config.readConfigFromFile(selectedFile.getAbsolutePath());
+            config.setAllMinMax();
+//            System.out.println(config.toString());
+            serversSpinner.getValueFactory().setValue(config.getServerAmount());
+            clientsSpinner.getValueFactory().setValue(config.getMaxClients());
+            openTimeSpinner.getValueFactory().setValue(config.getOpenTime());
+            simulationDaysSpinner.getValueFactory().setValue(config.getSimulationDays());
+
+            arrivalTable.setItems(FXCollections.observableList(config.getArrivalDistribution()));
+            serviceTable.setItems(FXCollections.observableList(config.getServiceDistribution()));
+
         } else {
+            AlertBox.display("Advertencia","Error  al abrir el archivo");
             System.out.println("Archivo inválido");
+        }
+    }
+
+    public void saveFileButtonClicked() throws Exception {
+        fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+        File selectedFile = fileChooser.showSaveDialog(null);
+        System.out.println(selectedFile.getAbsolutePath());
+        Boolean status;
+
+        //Se obtiene el valor de la cantidad de servidores
+        config.setServerAmount(serversSpinner.getValue());
+
+        //Se obtiene el valor de la cantidad de clientes permitidos en el sistema
+        config.setMaxClients(clientsSpinner.getValue());
+
+        //Se obtiene el valor del tiempo de trabajo en el sistema
+        config.setOpenTime(openTimeSpinner.getValue());
+
+        //Se obtiene el valor de la cantidad de días de simulación
+        config.setSimulationDays(simulationDaysSpinner.getValue());
+
+        //Se obtienen todos los elementos de la tabla de distribución de tiempo de llegadas
+        ArrayList<TimeDistribution> arrivalTableItems = new ArrayList<>();
+        arrivalTableItems.addAll(arrivalTable.getItems());
+
+        ArrayList<TimeDistribution> serviceTableItems = new ArrayList<>();
+        serviceTableItems.addAll(serviceTable.getItems());
+
+        config.setServiceDistribution(serviceTableItems);
+
+        config.setArrivalDistribution(arrivalTableItems);
+
+
+        if ((TimeDistribution.verifyProbabilities(arrivalTableItems)==1) && (TimeDistribution.verifyProbabilities(serviceTableItems)==1)){
+            status = Config.writeConfigToFile(selectedFile.getAbsolutePath(),config);
+            if (!status){
+                AlertBox.display("Advertencia", "Error: El archivo no pudo ser creado");
+            }
+        }
+        else {
+            if (TimeDistribution.verifyProbabilities(arrivalTableItems) != 1) {
+                AlertBox.display("Advertencia", "La sumatoria de las probabilidades de la distribución de tiempo de llegadas debe ser igual a 1");
+            }
+            if (TimeDistribution.verifyProbabilities(serviceTableItems) != 1) {
+                AlertBox.display("Advertencia", "La sumatoria de las probabilidades de la distribución de tiempo de servicio debe ser igual a 1");
+            }
         }
     }
 
@@ -168,7 +232,7 @@ public class ConfigurationController implements Initializable {
 
         if ((TimeDistribution.verifyProbabilities(arrivalTableItems)==1) && (TimeDistribution.verifyProbabilities(serviceTableItems)==1)){
             SimulationController sc = new SimulationController();
-            sc.display(config);
+            sc.display(config,simulationTableCheck.isSelected());
             Stage primaryStage = (Stage) simulationButton.getScene().getWindow();
             primaryStage.close();
         }
@@ -180,7 +244,6 @@ public class ConfigurationController implements Initializable {
                 AlertBox.display("Advertencia", "La sumatoria de las probabilidades de la distribución de tiempo de servicio debe ser igual a 1");
             }
         }
-
     }
 
 }

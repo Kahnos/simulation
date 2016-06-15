@@ -14,8 +14,19 @@
             <TableView fx:id="simulationTable" prefHeight="400.0" prefWidth="381.0">
             </TableView>
              <VBox>
-                <Label fx:id="title"/>
-                <ListView fx:id="statisticsListView"></ListView>
+                <children>
+                  <Label fx:id="title"/>
+                  <ListView fx:id="statisticsListView"></ListView>
+                  <HBox>
+                     <children>
+                        <VBox>
+                           <Label fx:id="cantClientsLabel" text="Cantidad de clientes"/>
+                           <PieChart fx:id="pieCantClients"></PieChart>
+                        </VBox>
+                     </children>
+
+                  </HBox>
+                </children>
              </VBox>
          </children>
       </HBox>

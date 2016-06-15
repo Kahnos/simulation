@@ -160,7 +160,7 @@ public class Config {
      * @param filePath contains the path to the file containing the JSON configuration.
      * @return the parsed Config or null if an error occurs.
      */
-    public static Config writeConfigToFile(String filePath, Config config) throws Exception{
+    public static boolean writeConfigToFile(String filePath, Config config) throws Exception{
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String configJson;
 
@@ -172,11 +172,13 @@ public class Config {
             Files.write(Paths.get(filePath), configJson.getBytes());
         } catch (IOException e) {
             System.err.println("Error writing to file " + filePath);
+            return false;
         } catch (Exception e) {
             System.err.println("Error: " + e);
+            return false;
         }
 
-        return config;
+        return true;
     }
     
     @Override
