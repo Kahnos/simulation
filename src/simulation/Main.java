@@ -19,6 +19,7 @@ public class Main extends Application {
         window.setScene(new Scene(configFXML, 530, 600));
         window.show();
         window.setResizable(false);
+
     }
 
     public static void main(String[] args) {

@@ -260,6 +260,29 @@ public class Simulation {
         return serverTime / config.getServerAmount();
     }
 
+    public ArrayList<Double> getAllStatistics() {
+        ArrayList<Double> statistics = new ArrayList<>();
+
+        statistics.add(countClients());
+        statistics.add(countClientsWithWait());
+        statistics.add(countClientsWithoutWait());
+        statistics.add(getWaitProbability());
+        statistics.add(countLostClients());
+        statistics.add(calculateTotalClientTime());
+        statistics.add(calculateClientWaitTime());
+        statistics.add(calculateTotalWaitingClientTime());
+        statistics.add(calculateTotalNonWaitingClientTime());
+        statistics.add(calculateExtraWorkTime());
+
+        for (int i = 0; i < config.getServerAmount(); i++) {
+            statistics.add(calculateServerUseTime(i));
+        }
+
+        statistics.add(calculateAllServersUseTime());
+
+        return statistics;
+    }
+
     @Override
     public String toString() {
         StringBuilder string = new StringBuilder();
