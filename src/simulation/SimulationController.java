@@ -9,11 +9,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Side;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.chart.AreaChart;
-import javafx.scene.chart.Chart;
-import javafx.scene.chart.PieChart;
+import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -59,8 +58,14 @@ public class SimulationController extends HBox {
     @FXML private TableColumn<Event, Integer> dtColumn = new TableColumn<>();
     @FXML private TableColumn<Event, Integer> [] tableColumns;
 
+    @FXML private VBox statisticsVB;
+
+    private Simulation simulation;
+
     //Charts para las estadísticas
-    PieChart cantCLientsPie;
+    @FXML private PieChart cantClientsPie;
+    @FXML private BarChart<String, Number> avgTimeBar;
+    //@FXML private BarChart<String, Number> serverUseBar;
 
     private Config config;
 
@@ -80,15 +85,15 @@ public class SimulationController extends HBox {
 
     public void display(Config config, Boolean simulationTableCheck){
         Stage window = new Stage();
-
-        this.config = config;
         window.setResizable(false);
 
-        // Test day
-        Day testDay = getTestDay();
+        this.config = config;
+        simulation = new Simulation(config);
+
+        statisticsVB.setPadding(new Insets(0,0,0,20));
 
         ObservableList<Event> eventList = FXCollections.observableArrayList();
-        eventList.addAll(testDay.getEvents());
+        eventList.addAll(simulation.getDays().get(0).getEvents());
 
         //Creación de las columnas de la tabla de simulación
         //Eventos
@@ -154,35 +159,45 @@ public class SimulationController extends HBox {
 
         title.setText("Estadísticas");
         title.setPadding(new Insets(10, 0, 10, 20)); //arriba, derecha, abajo, izquierda
-        cantClientsLabel.setPadding(new Insets(10,0,0,20));
 
+        //PieChart para la cantidad de clientes
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+        pieChartData.addAll(new PieChart.Data("Con espera" + simulation.countClientsWithWait(), simulation.countClientsWithWait()),
+                new PieChart.Data("Sin espera: "+ simulation.countClientsWithoutWait(), simulation.countClientsWithoutWait()),
+                new PieChart.Data("Se van sin ser atendidos: " + simulation.countLostClients(), simulation.countLostClients()));
+
+        cantClientsPie.setData(pieChartData);
+        //final PieChart chart = new PieChart(pieChartData);
+        cantClientsPie.setTitle("Cantidad de clientes");
+        cantClientsPie.setLegendSide(Side.RIGHT);
+        cantClientsPie.setLegendVisible(true);
+        cantClientsPie.setLabelsVisible(false);
+
+        //BarChart para promedio de tiempo
+        final NumberAxis yAxis = new NumberAxis();
+        final CategoryAxis xAxis = new CategoryAxis();
+
+        avgTimeBar.setTitle("Tiempo promedio");
+        yAxis.setLabel("Tiempo");
+
+        ObservableList<XYChart.Series<String, Number>> barChartData = FXCollections.observableArrayList();
+        final BarChart.Series<String, Number> series1 =  new BarChart.Series<String, Number>();
+        series1.setName("Tiempo promedio");
+        series1.getData().add(new XYChart.Data<String, Number>("En sistema", simulation.calculateTotalClientTime()));
+        series1.getData().add(new XYChart.Data<String, Number>("En cola", simulation.calculateClientWaitTime()));
+        series1.getData().add(new XYChart.Data<String, Number>("En sistema cuando hace cola", simulation.calculateTotalWaitingClientTime()));
+        series1.getData().add(new XYChart.Data<String, Number>("En sistema cuando no hace cola", simulation.calculateTotalNonWaitingClientTime()));
+        series1.getData().add(new XYChart.Data<String, Number>("Trabajo extra del negocio", simulation.calculateExtraWorkTime()));
+
+        barChartData.add(series1);
+        avgTimeBar.setData(barChartData);
 
         //ListView para las estadísticas
-/*        ObservableList<Double> statistics;
-        statistics = FXCollections.observableList();
-        statisticsListView.setItems(statistics);
+        ObservableList<Double> statistics;
+        statistics = FXCollections.observableList(simulation.getAllStatistics());
+        //statisticsListView.setItems(statistics);
         statisticsListView.setMouseTransparent(true);
-        statisticsListView.setFocusTraversable(false);*/
-    }
-
-    public static Day getTestDay() {
-        ArrayList<TimeDistribution> arrivalDistribution = new ArrayList<>();
-        arrivalDistribution.add(new TimeDistribution(3, 0.5, arrivalDistribution));
-        arrivalDistribution.add(new TimeDistribution(6, 0.2, arrivalDistribution));
-        arrivalDistribution.add(new TimeDistribution(9, 0.15, arrivalDistribution));
-        arrivalDistribution.add(new TimeDistribution(12, 0.05, arrivalDistribution));
-        arrivalDistribution.add(new TimeDistribution(15, 0.1, arrivalDistribution));
-
-        ArrayList<TimeDistribution> serviceDistribution = new ArrayList<>();
-        serviceDistribution.add(new TimeDistribution(10, 0.25, serviceDistribution));
-        serviceDistribution.add(new TimeDistribution(12, 0.25, serviceDistribution));
-        serviceDistribution.add(new TimeDistribution(14, 0.25, serviceDistribution));
-        serviceDistribution.add(new TimeDistribution(18, 0.25, serviceDistribution));
-
-        Config config = new Config(1, 60, 2, 4, arrivalDistribution, serviceDistribution);
-        Day day = new Day(1, config);
-        System.out.println(day.toString());
-        return day;
+        statisticsListView.setFocusTraversable(false);
     }
 
 }

@@ -7,29 +7,36 @@
 <?import javafx.scene.layout.*?>
 
 <fx:root fx:id="main" type="javafx.scene.layout.HBox" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
-<Pane fx:id="mainPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <HBox prefHeight="400.0" prefWidth="600.0">
-         <children>
-            <TableView fx:id="simulationTable" prefHeight="400.0" prefWidth="381.0">
-            </TableView>
-             <VBox>
+    <Pane fx:id="mainPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="1100" prefHeight="400.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+        <children>
+            <HBox prefHeight="400.0" prefWidth="1000.0">
                 <children>
-                  <Label fx:id="title"/>
-                  <ListView fx:id="statisticsListView"></ListView>
-                  <HBox>
-                     <children>
-                        <VBox>
-                           <Label fx:id="cantClientsLabel" text="Cantidad de clientes"/>
-                           <PieChart fx:id="pieCantClients"></PieChart>
-                        </VBox>
-                     </children>
-
-                  </HBox>
+                    <TableView fx:id="simulationTable" prefHeight="400.0" minWidth="-Infinity" prefWidth="420.0">
+                    </TableView>
+                    <VBox fx:id="statisticsVB">
+                        <children>
+                            <Label fx:id="title"/>
+                            <ListView fx:id="statisticsListView"></ListView>
+                            <ScrollPane fitToHeight="true" fitToWidth="true">
+                                <VBox minWidth="600">
+                                    <children>
+                                        <PieChart fx:id="cantClientsPie"></PieChart>
+                                       <BarChart fx:id="avgTimeBar">
+                                           <xAxis>
+                                               <CategoryAxis side="BOTTOM" />
+                                           </xAxis>
+                                           <yAxis>
+                                               <NumberAxis side="LEFT" />
+                                           </yAxis>
+                                       </BarChart>
+                                        <!--  <BarChart fx:id="serverUseBar"></BarChart>-->
+                                    </children>
+                                </VBox>
+                            </ScrollPane>
+                        </children>
+                    </VBox>
                 </children>
-             </VBox>
-         </children>
-      </HBox>
-   </children>
-</Pane>
+            </HBox>
+        </children>
+    </Pane>
 </fx:root>
