@@ -1,7 +1,4 @@
 package simulation;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -86,19 +83,19 @@ public class ConfigurationController implements Initializable {
         //        timeColumnArrival.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
         serversSpinner.setEditable(true);
         serversSpinner.setValueFactory(svfServers);
-        addSpinnerEvents(serversSpinner);
+        addEvents(serversSpinner);
 
         clientsSpinner.setEditable(true);
         clientsSpinner.setValueFactory(svfClients);
-        addSpinnerEvents(clientsSpinner);
+        addEvents(clientsSpinner);
 
         openTimeSpinner.setEditable(true);
         openTimeSpinner.setValueFactory(svfInt);
-        addSpinnerEvents(openTimeSpinner);
+        addEvents(openTimeSpinner);
 
         simulationDaysSpinner.setEditable(true);
         simulationDaysSpinner.setValueFactory(svfInt);
-        addSpinnerEvents(simulationDaysSpinner);
+        addEvents(simulationDaysSpinner);
     }
 
     /**
@@ -106,7 +103,7 @@ public class ConfigurationController implements Initializable {
      * @param spinner contains the spinner.
      * Code from José Pereda. Modified by Kahnos. http://stackoverflow.com/questions/27433899/spinner-control-value
      */
-    private void addSpinnerEvents(Spinner spinner) {
+    private void addEvents(Spinner spinner) {
         // Commit on TAB
         spinner.addEventFilter(KeyEvent.ANY, e->{
             if (spinner.isEditable() && e.getCode().equals(KeyCode.TAB)) {
