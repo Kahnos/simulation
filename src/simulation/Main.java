@@ -16,7 +16,7 @@ public class Main extends Application {
     public void start(Stage window) throws Exception{
         Parent configFXML = FXMLLoader.load(getClass().getResource("configuration.fxml"));
         window.setTitle("Configuración de la simulación");
-        window.setScene(new Scene(configFXML, 530, 600));
+        window.setScene(new Scene(configFXML, 530, 630));
         window.show();
         window.setResizable(false);
 

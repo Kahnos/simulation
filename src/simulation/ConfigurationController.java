@@ -41,7 +41,7 @@ public class ConfigurationController implements Initializable {
 
     @FXML private Spinner<Integer> clientsSpinner = new Spinner<>();
     //SpinnerValueFactory del spinner de los clientes
-    SpinnerValueFactory svfClients = new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 1000);
+    SpinnerValueFactory svfClients = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1000);
 
     @FXML private Spinner<Integer> openTimeSpinner = new Spinner<>();
     @FXML private Spinner<Integer> simulationDaysSpinner = new Spinner<>();
@@ -74,7 +74,7 @@ public class ConfigurationController implements Initializable {
     @FXML private Button fileButton;
     @FXML private Button saveFileButton;
 
-    //CheckBox dela tabla de simulación
+    //CheckBox de la tabla de simulación
     @FXML private CheckBox simulationTableCheck;
 
     @FXML private Config config = new Config();
@@ -195,7 +195,7 @@ public class ConfigurationController implements Initializable {
     public void fileButtonClicked() throws Exception {
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
         File selectedFile = fileChooser.showOpenDialog(null);
-        if (selectedFile != null){
+        if ((selectedFile != null) && (Config.readConfigFromFile(selectedFile.getAbsolutePath()) != null)){
             System.out.println(selectedFile.getAbsolutePath());
             config = Config.readConfigFromFile(selectedFile.getAbsolutePath());
             config.setAllMinMax();
@@ -209,8 +209,7 @@ public class ConfigurationController implements Initializable {
             serviceTable.setItems(FXCollections.observableList(config.getServiceDistribution()));
 
         } else {
-            AlertBox.display("Advertencia","Error  al abrir el archivo");
-            System.out.println("Archivo inválido");
+            AlertBox.display("Advertencia","Error al abrir el archivo");
         }
     }
 

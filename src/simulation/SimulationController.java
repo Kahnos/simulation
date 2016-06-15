@@ -67,7 +67,12 @@ public class SimulationController extends HBox {
     @FXML private BarChart<String, Number> avgTimeBar;
     //@FXML private BarChart<String, Number> serverUseBar;
 
+    @FXML private TextField simulationDayField;
+    @FXML private Button simulationDayButton;
+
     private Config config;
+    private int daySelected;
+    private ObservableList<Event> eventList = FXCollections.observableArrayList();
 
 
 
@@ -83,6 +88,13 @@ public class SimulationController extends HBox {
         }
     }
 
+    public void simulationDayButtonClicked(){
+        daySelected = Integer.parseInt(simulationDayField.getText());
+        eventList.clear();
+        eventList.addAll(simulation.getDays().get(daySelected).getEvents());
+//        simulationTable.setItems(eventList);
+    }
+
     public void display(Config config, Boolean simulationTableCheck){
         Stage window = new Stage();
         window.setResizable(false);
@@ -92,7 +104,6 @@ public class SimulationController extends HBox {
 
         statisticsVB.setPadding(new Insets(0,0,0,20));
 
-        ObservableList<Event> eventList = FXCollections.observableArrayList();
         eventList.addAll(simulation.getDays().get(0).getEvents());
 
         //Creación de las columnas de la tabla de simulación
@@ -193,11 +204,32 @@ public class SimulationController extends HBox {
         avgTimeBar.setData(barChartData);
 
         //ListView para las estadísticas
-        ObservableList<Double> statistics;
-        statistics = FXCollections.observableList(simulation.getAllStatistics());
-        //statisticsListView.setItems(statistics);
-        statisticsListView.setMouseTransparent(true);
+        ObservableList<String> statistics = FXCollections.observableArrayList();
+        statistics.addAll("Promedio de clientes en el sitema: " + String.valueOf(simulation.countClients()),
+                          "Probabilidad de esperar: " + String.valueOf(simulation.getWaitProbability()),
+                          "Clientes con espera: " + String.valueOf(simulation.countClientsWithWait()),
+                          "Clientes sin espera: " + String.valueOf(simulation.countClientsWithoutWait()),
+                          "Clientes que se van sin ser atendidos: " + String.valueOf(simulation.countLostClients()),
+                          "Tiempo promedio de los clientes en el sistema: " + String.valueOf(simulation.calculateTotalClientTime()),
+                          "Tiempo promedio que un cliente está en cola: " + String.valueOf(simulation.calculateClientWaitTime()),
+                          "Tiempo promedio en el sitema de un cliente que hace cola: " + String.valueOf(simulation.calculateTotalWaitingClientTime()),
+                          "Tiempo promedio en el sitema de un cliente que no hace cola: " + String.valueOf(simulation.calculateTotalNonWaitingClientTime()),
+                          "Tiempo promedio adicional de trabajo del negocio: " + String.valueOf(simulation.calculateExtraWorkTime()),
+                          "Porcentaje de utilización de todos los servidores: " + String.valueOf(simulation.calculateAllServersUseTime()),
+                          "Porcentaje de utilización del servidor"
+                          );
+
+        statisticsListView.setItems(statistics);
+   /*     statisticsListView.setMouseTransparent(true);
         statisticsListView.setFocusTraversable(false);
+*/
+        //Recomendación cuando el tiempo de espera es mayor a 15 minutos
+        if (simulation.calculateClientWaitTime()>15){
+            AlertBox.display("Advertencia: Objetivo no cumplido", "Se recomienda agregar más trabajadores, mejorar su desempeño o limitar la llegada de clientes estableciendo citas");
+        }
+        else{
+            AlertBox.display("Objetivo cumplido", "El objetivo se cumple. Los clientes no esperan más de 15minutos para ser atendidos");
+        }
     }
 
 }
