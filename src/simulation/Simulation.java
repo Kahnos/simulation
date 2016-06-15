@@ -230,6 +230,7 @@ public class Simulation {
      */
     public double calculateServerUseTime(int index) {
         double serverTime = 0;
+        double globalTime = 0;
         Event event;
         Event prevEvent;
 
@@ -241,11 +242,12 @@ public class Simulation {
                 if (prevEvent.getServers().get(index).isBusy())
                     serverTime += event.getTM() - prevEvent.getTM();
             }
+            globalTime += (serverTime / day.getFinalTM());
         }
 
-        return serverTime / config.getSimulationDays();
+        return globalTime / config.getSimulationDays();
     }
-
+    // TODO: 15/06/2016 LIMIT DOUBLES TO 2 DECIMALS
     /**
      * Calculates the total average use time of all the servers.
      * @return the average use time of all servers.
