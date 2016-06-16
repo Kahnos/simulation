@@ -25,6 +25,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -82,6 +83,8 @@ public class SimulationController extends HBox {
 
     @FXML private TextField simulationDayField;
     @FXML private Button simulationDayButton;
+
+    @FXML private HBox mainHBox;
 
     private Config config;
     private int daySelected;
@@ -157,9 +160,12 @@ public class SimulationController extends HBox {
     public void display(Config config, Boolean simulationTableCheck) throws Exception{
         Stage window = new Stage();
         window.setResizable(false);
+        window.setTitle("Simulación");
 
         this.config = config;
         simulation = new Simulation(config);
+
+
 
         statisticsVB.setPadding(new Insets(0,0,0,20));
 
@@ -221,6 +227,12 @@ public class SimulationController extends HBox {
             simulationTable.setManaged(false);
             simulationDayButton.setManaged(false);
             simulationDayField.setManaged(false);
+            mainPanel.setMaxWidth(570);
+            mainPanel.setMinWidth(570);
+            mainPanel.setPrefWidth(570);
+            mainHBox.setMaxWidth(570);
+            mainHBox.setMinWidth(570);
+            mainHBox.setPrefWidth(570);
         }
 
         HBox hb = new HBox();
@@ -231,8 +243,7 @@ public class SimulationController extends HBox {
         window.setScene(scene);
         window.show();
 
-        title.setText("Estadísticas");
-        title.setPadding(new Insets(10, 0, 10, 20)); //arriba, derecha, abajo, izquierda
+        title.setPadding(new Insets(10, 0, 10, 160)); //arriba, derecha, abajo, izquierda
 
         //PieChart para la cantidad de clientes
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
@@ -329,19 +340,32 @@ public class SimulationController extends HBox {
 
         //ListView para las estadísticas
         ObservableList<String> statistics = FXCollections.observableArrayList();
-        statistics.addAll("Promedio de clientes en el sitema: " + String.valueOf(simulation.countClients()),
+
+        statistics.add("Configuración:");
+        statistics.add("Días de simulación: " + config.getSimulationDays());
+        statistics.add("Tiempo de apertura del negocio: " + config.getOpenTime());
+        statistics.add("Cantidad de servidores: " + config.getServerAmount());
+        statistics.add("Máximo de clientes en el sistema: " + config.getMaxClients());
+        statistics.add(config.spanishToString());
+
+        statistics.add("Estadísticas: ");
+        statistics.addAll("Promedio de clientes en el sistema: " + String.valueOf(simulation.countClients()),
                           "Probabilidad de esperar: " + String.valueOf(simulation.getWaitProbability()),
                           "Clientes con espera: " + String.valueOf(simulation.countClientsWithWait()),
                           "Clientes sin espera: " + String.valueOf(simulation.countClientsWithoutWait()),
                           "Clientes que se van sin ser atendidos: " + String.valueOf(simulation.countLostClients()),
                           "Tiempo promedio de los clientes en el sistema: " + String.valueOf(simulation.calculateTotalClientTime()),
                           "Tiempo promedio que un cliente está en cola: " + String.valueOf(simulation.calculateClientWaitTime()),
-                          "Tiempo promedio en el sitema de un cliente que hace cola: " + String.valueOf(simulation.calculateTotalWaitingClientTime()),
-                          "Tiempo promedio en el sitema de un cliente que no hace cola: " + String.valueOf(simulation.calculateTotalNonWaitingClientTime()),
+                          "Tiempo promedio en el sistema de un cliente que hace cola: " + String.valueOf(simulation.calculateTotalWaitingClientTime()),
+                          "Tiempo promedio en el sistema de un cliente que no hace cola: " + String.valueOf(simulation.calculateTotalNonWaitingClientTime()),
                           "Tiempo promedio adicional de trabajo del negocio: " + String.valueOf(simulation.calculateExtraWorkTime()),
-                          "Porcentaje de utilización de todos los servidores: " + String.valueOf(simulation.calculateAllServersUseTime()),
-                          "Porcentaje de utilización del servidor"
+                          "Porcentaje de utilización de todos los servidores: " + String.valueOf(simulation.calculateAllServersUseTime())
                           );
+
+        for (int i = 0; i < config.getServerAmount(); i++) {
+            statistics.add( "Porcentaje de utilización del servidor " + i + ": " +
+                    String.valueOf(simulation.calculateServerUseTime(i) * 100) + "%");
+        }
 
         statisticsListView.setItems(statistics);
    /*     statisticsListView.setMouseTransparent(true);

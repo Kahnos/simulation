@@ -213,6 +213,37 @@ public class Config {
         return true;
     }
 
+    public String spanishToString(){
+        StringBuilder string = new StringBuilder();
+
+        /*string.append("Configuración:\n");
+        string.append("Días de simulación: ").append(simulationDays).append("\n");
+        string.append("Tiempo de apertura del negocio: ").append(openTime).append("\n");
+        string.append("Cantidad de servidores: ").append(serverAmount).append("\n");
+        string.append("Máximo de clientes en el sistema: ").append(maxClients);
+        string.append("\n\n");*/
+
+        // Printing arrival distributions.
+        string.append("Distribución de llegada: \n\n");
+        string.append(String.format("%10s%10s%10s\n","Time","Min","Max"));
+        string.append("==================\n");
+        for (TimeDistribution AT : arrivalDistribution) {
+            string.append(String.format("%10d%10.2f%10.2f\n", AT.getTime(), AT.getProbabilityMin(), AT.getProbabilityMax()));
+        }
+        string.append("\n\n");
+
+        // Printing service distributions.
+        string.append("Distribución de servicio: \n\n");
+        string.append(String.format("%10s%10s%10s\n","Time","Min","Max"));
+        string.append("===================\n");
+        for (TimeDistribution ST : serviceDistribution) {
+            string.append(String.format("%10d%10.2f%10.2f\n", ST.getTime(), ST.getProbabilityMin(), ST.getProbabilityMax()));
+        }
+        string.append("\n\n");
+
+        return string.toString();
+    }
+
     @Override
     public String toString() {
         StringBuilder string = new StringBuilder();

@@ -41,7 +41,7 @@ public class ConfigurationController implements Initializable {
 
     @FXML private Spinner<Integer> clientsSpinner = new Spinner<>();
     //SpinnerValueFactory del spinner de los clientes
-    SpinnerValueFactory svfClients = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 1000);
+    SpinnerValueFactory svfClients = new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 1000000);
 
     @FXML private Spinner<Integer> openTimeSpinner = new Spinner<>();
     @FXML private Spinner<Integer> simulationDaysSpinner = new Spinner<>();

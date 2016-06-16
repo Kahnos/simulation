@@ -6,21 +6,29 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.scene.text.Font?>
+<?import javafx.geometry.Insets?>
 <fx:root fx:id="main" type="javafx.scene.layout.HBox" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
-    <Pane fx:id="mainPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="900" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+    <Pane fx:id="mainPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="950" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
         <children>
-            <HBox prefHeight="600.0" prefWidth="900.0">
+            <HBox fx:id="mainHBox" prefHeight="600.0" prefWidth="950.0">
                 <children>
                     <TableView fx:id="simulationTable" prefHeight="400.0" minWidth="-Infinity" prefWidth="400.0">
                     </TableView>
-                    <VBox fx:id="statisticsVB" prefWidth="600">
+                    <VBox fx:id="statisticsVB" prefWidth="550">
                         <children>
                             <HBox spacing="10.0">
                                 <TextField fx:id="simulationDayField" promptText="Día de simulación" />
                                 <Button fx:id="simulationDayButton" onAction="#simulationDayButtonClicked" prefWidth="100.0" text="Ver día"/>
                             </HBox>
-                            <Label fx:id="title"/>
-                            <ListView fx:id="statisticsListView" ></ListView>
+                            <Label fx:id="title" minHeight="-Infinity" minWidth="-Infinity" text="ESTADÍSTICAS">
+                                <VBox.margin>
+                                    <Insets bottom="5.0" left="60.0" />
+                                </VBox.margin>
+                                <font>
+                                    <Font name="System Bold" size="14.0" />
+                                </font></Label>
+                            <ListView fx:id="statisticsListView" minHeight="200"></ListView>
                             <ScrollPane fitToHeight="true" fitToWidth="true">
                                 <VBox minWidth="600">
                                     <children>
