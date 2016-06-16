@@ -1,0 +1,20 @@
+<component name="ArtifactManager">
+  <artifact type="javafx" name="simulation">
+    <output-path>$PROJECT_DIR$/out/artifacts/simulation</output-path>
+    <properties id="javafx-properties">
+      <options>
+        <option name="appClass" value="simulation.Main" />
+        <option name="description" value="" />
+        <option name="htmlParamFile" value="" />
+        <option name="paramFile" value="" />
+        <option name="title" value="Simulación" />
+        <option name="vendor" value="" />
+      </options>
+    </properties>
+    <root id="root">
+      <element id="archive" name="simulation.jar">
+        <element id="module-output" name="simulation" />
+      </element>
+    </root>
+  </artifact>
+</component>

@@ -373,10 +373,10 @@ public class SimulationController extends HBox {
 */
         //Recomendación cuando el tiempo de espera es mayor a 15 minutos
         if (simulation.calculateClientWaitTime()>15){
-            AlertBox.display("Advertencia: Objetivo no cumplido", "                                 El objetivo no se cumple.\nSe recomienda agregar más trabajadores, mejorar su desempeño o limitar la llegada de clientes estableciendo citas.");
+            AlertBox.display("Advertencia: Objetivo no cumplido", "El objetivo no se cumple.\nSe recomienda agregar más trabajadores, mejorar su desempeño o limitar la llegada de clientes estableciendo citas.");
         }
         else{
-            AlertBox.display("Objetivo cumplido", "                                 El objetivo se cumple.\n Los clientes no esperan más de 15 minutos para ser atendidos.");
+            AlertBox.display("Objetivo cumplido", "El objetivo se cumple.\n Los clientes no esperan más de 15 minutos para ser atendidos.");
         }
     }
 

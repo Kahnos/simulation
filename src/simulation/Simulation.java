@@ -144,13 +144,14 @@ public class Simulation {
         double clientTime = 0;
 
         for (Day day : days) {
+            clientTime = 0;
             for (Client client : day.getClients()) {
                 clientTime += client.getDepartureTime() - client.getRealArrivalTime();
             }
             globalTime += (clientTime / day.getClients().size());
         }
 
-        return round(globalTime / config.getSimulationDays(), 2);
+        return round((globalTime / config.getSimulationDays()), 2);
     }
 
     /**
@@ -162,6 +163,7 @@ public class Simulation {
         double clientTime = 0;
 
         for (Day day : days) {
+            clientTime = 0;
             for (Client client : day.getClients()) {
                 if (client.getWaitTime() != 0)
                     clientTime += client.getWaitTime();
@@ -181,6 +183,7 @@ public class Simulation {
         double clientTime = 0;
 
         for (Day day : days) {
+            clientTime = 0;
             for (Client client : day.getClients()) {
                 if (client.getWaitTime() == 0)
                     clientTime += client.getDepartureTime() - client.getRealArrivalTime();
@@ -200,6 +203,7 @@ public class Simulation {
         double clientTime = 0;
 
         for (Day day : days) {
+            clientTime = 0;
             for (Client client : day.getClients()) {
                 if (client.getWaitTime() != 0)
                     clientTime += client.getDepartureTime() - client.getRealArrivalTime();
@@ -237,6 +241,7 @@ public class Simulation {
         Event prevEvent;
 
         for (Day day : days) {
+            serverTime = 0;
             for (int i = 1; i < day.getEvents().size(); i++) {
                 event = day.getEvents().get(i);
                 prevEvent = day.getEvents().get(i - 1);

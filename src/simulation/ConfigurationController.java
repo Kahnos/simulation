@@ -87,7 +87,7 @@ public class ConfigurationController implements Initializable {
 
     @Override
     public void initialize (URL url, ResourceBundle rb) {
-        File file = new File("./assets/logoUCAB.png");
+        File file = new File("logoUCAB.png");
         Image image = new Image(file.toURI().toString());
         logo.setImage(image);
 
