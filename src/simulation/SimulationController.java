@@ -38,8 +38,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
+
 /**
- * Created by libcorrales y Kahnos on 12/06/2016.
+ * Created by libcorrales and Kahnos on 12/06/2016.
  */
 public class SimulationController extends HBox {
 
@@ -78,7 +79,12 @@ public class SimulationController extends HBox {
     @FXML private CategoryAxis avgServerBarCategory;
     @FXML private NumberAxis avgServerBarNumber;
 
+    @FXML private TextField simulationDayField;
+    @FXML private Button simulationDayButton;
+
     private Config config;
+    private int daySelected;
+    private ObservableList<Event> eventList = FXCollections.observableArrayList();
 
 
 
@@ -94,6 +100,44 @@ public class SimulationController extends HBox {
         }
     }
 
+    public void simulationDayButtonClicked(){
+        daySelected = Integer.parseInt(simulationDayField.getText());
+        eventList.clear();
+        eventList.addAll(simulation.getDays().get(daySelected).getEvents());
+//        simulationTable.setItems(eventList);
+    }
+
+    /**
+     * Displays label on top of bars in the bar charts.
+     * Code taken from: jewelsea http://stackoverflow.com/questions/15237192/how-to-display-bar-value-on-top-of-bar-javafx
+     * @param data
+     */
+    private void displayLabelForData(XYChart.Data<String, Number> data) {
+        final Node node = data.getNode();
+        final Text dataText = new Text(data.getYValue() + "");
+        node.parentProperty().addListener(new ChangeListener<Parent>() {
+            @Override public void changed(ObservableValue<? extends Parent> ov, Parent oldParent, Parent parent) {
+                Group parentGroup = (Group) parent;
+                parentGroup.getChildren().add(dataText);
+            }
+        });
+
+        node.boundsInParentProperty().addListener(new ChangeListener<Bounds>() {
+            @Override public void changed(ObservableValue<? extends Bounds> ov, Bounds oldBounds, Bounds bounds) {
+                dataText.setLayoutX(
+                        Math.round(
+                                bounds.getMinX() + bounds.getWidth() / 2 - dataText.prefWidth(-1) / 2
+                        )
+                );
+                dataText.setLayoutY(
+                        Math.round(
+                                bounds.getMinY() - dataText.prefHeight(-1) * 0.5
+                        )
+                );
+            }
+        });
+    }
+
     public void display(Config config, Boolean simulationTableCheck){
         Stage window = new Stage();
         window.setResizable(false);
@@ -103,7 +147,6 @@ public class SimulationController extends HBox {
 
         statisticsVB.setPadding(new Insets(0,0,0,20));
 
-        ObservableList<Event> eventList = FXCollections.observableArrayList();
         eventList.addAll(simulation.getDays().get(0).getEvents());
 
         //Creación de las columnas de la tabla de simulación
@@ -265,42 +308,32 @@ public class SimulationController extends HBox {
         avgServerBar.setData(serverChartData);
 
         //ListView para las estadísticas
-        ObservableList<Double> statistics;
-        statistics = FXCollections.observableList(simulation.getAllStatistics());
-        //statisticsListView.setItems(statistics);
-        statisticsListView.setMouseTransparent(true);
+        ObservableList<String> statistics = FXCollections.observableArrayList();
+        statistics.addAll("Promedio de clientes en el sitema: " + String.valueOf(simulation.countClients()),
+                          "Probabilidad de esperar: " + String.valueOf(simulation.getWaitProbability()),
+                          "Clientes con espera: " + String.valueOf(simulation.countClientsWithWait()),
+                          "Clientes sin espera: " + String.valueOf(simulation.countClientsWithoutWait()),
+                          "Clientes que se van sin ser atendidos: " + String.valueOf(simulation.countLostClients()),
+                          "Tiempo promedio de los clientes en el sistema: " + String.valueOf(simulation.calculateTotalClientTime()),
+                          "Tiempo promedio que un cliente está en cola: " + String.valueOf(simulation.calculateClientWaitTime()),
+                          "Tiempo promedio en el sitema de un cliente que hace cola: " + String.valueOf(simulation.calculateTotalWaitingClientTime()),
+                          "Tiempo promedio en el sitema de un cliente que no hace cola: " + String.valueOf(simulation.calculateTotalNonWaitingClientTime()),
+                          "Tiempo promedio adicional de trabajo del negocio: " + String.valueOf(simulation.calculateExtraWorkTime()),
+                          "Porcentaje de utilización de todos los servidores: " + String.valueOf(simulation.calculateAllServersUseTime()),
+                          "Porcentaje de utilización del servidor"
+                          );
+
+        statisticsListView.setItems(statistics);
+   /*     statisticsListView.setMouseTransparent(true);
         statisticsListView.setFocusTraversable(false);
-    }
-
-    /**
-     * Displays label on top of bars in the bar charts.
-     * Code taken from: jewelsea http://stackoverflow.com/questions/15237192/how-to-display-bar-value-on-top-of-bar-javafx
-     * @param data
-     */
-    private void displayLabelForData(XYChart.Data<String, Number> data) {
-        final Node node = data.getNode();
-        final Text dataText = new Text(data.getYValue() + "");
-        node.parentProperty().addListener(new ChangeListener<Parent>() {
-            @Override public void changed(ObservableValue<? extends Parent> ov, Parent oldParent, Parent parent) {
-                Group parentGroup = (Group) parent;
-                parentGroup.getChildren().add(dataText);
-            }
-        });
-
-        node.boundsInParentProperty().addListener(new ChangeListener<Bounds>() {
-            @Override public void changed(ObservableValue<? extends Bounds> ov, Bounds oldBounds, Bounds bounds) {
-                dataText.setLayoutX(
-                    Math.round(
-                        bounds.getMinX() + bounds.getWidth() / 2 - dataText.prefWidth(-1) / 2
-                    )
-                );
-                dataText.setLayoutY(
-                    Math.round(
-                        bounds.getMinY() - dataText.prefHeight(-1) * 0.5
-                    )
-                );
-            }
-        });
+*/
+        //Recomendación cuando el tiempo de espera es mayor a 15 minutos
+        if (simulation.calculateClientWaitTime()>15){
+            AlertBox.display("Advertencia: Objetivo no cumplido", "                         El objetivo no se cumple.\nSe recomienda agregar más trabajadores, mejorar su desempeño o limitar la llegada de clientes estableciendo citas");
+        }
+        else{
+            AlertBox.display("Objetivo cumplido", "                         El objetivo se cumple.\n Los clientes no esperan más de 15 minutos para ser atendidos");
+        }
     }
 
 }

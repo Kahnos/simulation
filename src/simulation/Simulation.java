@@ -247,7 +247,7 @@ public class Simulation {
 
         return globalTime / config.getSimulationDays();
     }
-
+    // TODO: 15/06/2016 LIMIT DOUBLES TO 2 DECIMALS
     /**
      * Calculates the total average use time of all the servers.
      * @return the average use time of all servers.

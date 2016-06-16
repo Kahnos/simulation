@@ -7,16 +7,20 @@
 <?import javafx.scene.layout.*?>
 
 <fx:root fx:id="main" type="javafx.scene.layout.HBox" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
-    <Pane fx:id="mainPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="1100" prefHeight="400.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+    <Pane fx:id="mainPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="900" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
         <children>
-            <HBox prefHeight="400.0" prefWidth="1000.0">
+            <HBox prefHeight="600.0" prefWidth="900.0">
                 <children>
-                    <TableView fx:id="simulationTable" prefHeight="400.0" minWidth="-Infinity" prefWidth="420.0">
+                    <TableView fx:id="simulationTable" prefHeight="400.0" minWidth="-Infinity" prefWidth="400.0">
                     </TableView>
-                    <VBox fx:id="statisticsVB">
+                    <VBox fx:id="statisticsVB" prefWidth="600">
                         <children>
+                            <HBox spacing="10.0">
+                                <TextField fx:id="simulationDayField" promptText="Día de simulación" />
+                                <Button fx:id="simulationDayButton" onAction="#simulationDayButtonClicked" prefWidth="100.0" text="Ver día"/>
+                            </HBox>
                             <Label fx:id="title"/>
-                            <ListView fx:id="statisticsListView"></ListView>
+                            <ListView fx:id="statisticsListView" ></ListView>
                             <ScrollPane fitToHeight="true" fitToWidth="true">
                                 <VBox minWidth="600">
                                     <children>
