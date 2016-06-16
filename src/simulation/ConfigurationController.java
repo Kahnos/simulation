@@ -261,25 +261,37 @@ public class ConfigurationController implements Initializable {
 
     public void addButtonClickedArrival(){
         if ((!arrivalTimeField.getText().isEmpty()) && (!arrivalProbField.getText().isEmpty())) {
-            ArrayList<TimeDistribution> arrivalTableItems = new ArrayList<>();
-            arrivalTableItems.addAll(arrivalTable.getItems());
-            TimeDistribution timeDistribution = new TimeDistribution(Integer.parseInt(arrivalTimeField.getText()),
-                    Double.parseDouble(arrivalProbField.getText()), arrivalTableItems);
-            arrivalTable.getItems().add(timeDistribution);
-            arrivalTimeField.clear();
-            arrivalProbField.clear();
+            try {
+                ArrayList<TimeDistribution> arrivalTableItems = new ArrayList<>();
+                arrivalTableItems.addAll(arrivalTable.getItems());
+                TimeDistribution timeDistribution = new TimeDistribution(Integer.parseInt(arrivalTimeField.getText()),
+                        Double.parseDouble(arrivalProbField.getText()), arrivalTableItems);
+                arrivalTable.getItems().add(timeDistribution);
+                arrivalTimeField.clear();
+                arrivalProbField.clear();
+            }
+            catch (NumberFormatException nfe) {
+                System.err.println("Error parsing double: " + nfe);
+                AlertBox.display("Advertencia", "La probabilidad de llegada a añadir no es válida.");
+            }
         }
     }
 
     public void addButtonClickedService(){
         if ((!serviceTimeField.getText().isEmpty()) && (!serviceProbField.getText().isEmpty())){
-            ArrayList<TimeDistribution> serviceTableItems = new ArrayList<>();
-            serviceTableItems.addAll(serviceTable.getItems());
-            TimeDistribution timeDistribution = new TimeDistribution(Integer.parseInt(serviceTimeField.getText()),
-                    Double.parseDouble(serviceProbField.getText()), serviceTableItems);
-            serviceTable.getItems().add(timeDistribution);
-            serviceTimeField.clear();
-            serviceProbField.clear();
+            try {
+                ArrayList<TimeDistribution> serviceTableItems = new ArrayList<>();
+                serviceTableItems.addAll(serviceTable.getItems());
+                TimeDistribution timeDistribution = new TimeDistribution(Integer.parseInt(serviceTimeField.getText()),
+                        Double.parseDouble(serviceProbField.getText()), serviceTableItems);
+                serviceTable.getItems().add(timeDistribution);
+                serviceTimeField.clear();
+                serviceProbField.clear();
+            }
+            catch (NumberFormatException nfe) {
+                System.err.println("Error parsing double: " + nfe);
+                AlertBox.display("Advertencia", "La probabilidad de servicio a añadir no es válida.");
+            }
         }
     }
 
@@ -298,7 +310,7 @@ public class ConfigurationController implements Initializable {
     }
 
     @FXML
-    public void simulationButtonClicked() throws IOException {
+    public void simulationButtonClicked() throws IOException, Exception {
 
         /*ArrayList<TimeDistribution> arrivalTableItems = new ArrayList<>();
         arrivalTableItems.addAll(arrivalTable.getItems());

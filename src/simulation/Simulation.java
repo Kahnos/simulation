@@ -1,5 +1,7 @@
 package simulation;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 
 /**
@@ -56,7 +58,7 @@ public class Simulation {
             globalCount += day.getClients().size();
         }
 
-        return globalCount / config.getSimulationDays();
+        return round(globalCount / config.getSimulationDays(), 2);
     }
 
     /**
@@ -76,7 +78,7 @@ public class Simulation {
             count = 0;
         }
 
-        return globalCount / config.getSimulationDays();
+        return round(globalCount / config.getSimulationDays(), 2);
     }
 
     /**
@@ -96,7 +98,7 @@ public class Simulation {
             count = 0;
         }
 
-        return globalCount / config.getSimulationDays();
+        return round(globalCount / config.getSimulationDays(), 2);
     }
 
     /**
@@ -116,7 +118,7 @@ public class Simulation {
             count = 0;
         }
 
-        return globalCount / config.getSimulationDays();
+        return round(globalCount / config.getSimulationDays(), 2);
     }
 
     /**
@@ -130,7 +132,7 @@ public class Simulation {
             globalCount += day.getLostClients();
         }
 
-        return globalCount / config.getSimulationDays();
+        return round(globalCount / config.getSimulationDays(), 2);
     }
 
     /**
@@ -148,7 +150,7 @@ public class Simulation {
             globalTime += (clientTime / day.getClients().size());
         }
 
-        return globalTime / config.getSimulationDays();
+        return round(globalTime / config.getSimulationDays(), 2);
     }
 
     /**
@@ -167,7 +169,7 @@ public class Simulation {
             globalTime += (clientTime / day.getClients().size());
         }
 
-        return globalTime / config.getSimulationDays();
+        return round(globalTime / config.getSimulationDays(), 2);
     }
 
     /**
@@ -186,7 +188,7 @@ public class Simulation {
             globalTime += (clientTime / day.getClients().size());
         }
 
-        return globalTime / config.getSimulationDays();
+        return round(globalTime / config.getSimulationDays(), 2);
     }
 
     /**
@@ -205,7 +207,7 @@ public class Simulation {
             globalTime += (clientTime / day.getClients().size());
         }
 
-        return globalTime / config.getSimulationDays();
+        return round(globalTime / config.getSimulationDays(), 2);
     }
 
     /**
@@ -220,7 +222,7 @@ public class Simulation {
                 globalTime += day.getFinalTM() - config.getOpenTime();
         }
 
-        return globalTime / config.getSimulationDays();
+        return round(globalTime / config.getSimulationDays(), 2);
     }
 
     /**
@@ -245,9 +247,9 @@ public class Simulation {
             globalTime += (serverTime / day.getFinalTM());
         }
 
-        return globalTime / config.getSimulationDays();
+        return round(globalTime / config.getSimulationDays(), 2);
     }
-    // TODO: 15/06/2016 LIMIT DOUBLES TO 2 DECIMALS
+
     /**
      * Calculates the total average use time of all the servers.
      * @return the average use time of all servers.
@@ -259,7 +261,7 @@ public class Simulation {
             serverTime += calculateServerUseTime(i);
         }
 
-        return serverTime / config.getServerAmount();
+        return round(serverTime / config.getServerAmount(), 2);
     }
 
     /**
@@ -287,6 +289,20 @@ public class Simulation {
         statistics.add(calculateAllServersUseTime());
 
         return statistics;
+    }
+
+    /**
+     * Rounds a double number. Taken from: http://stackoverflow.com/questions/2808535/round-a-double-to-2-decimal-places
+     * @param value is the double to round.
+     * @param places is the number of decimals.
+     * @return the rounded double.
+     */
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 
     @Override

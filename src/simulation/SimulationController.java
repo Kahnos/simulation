@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.URL;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
@@ -87,7 +88,6 @@ public class SimulationController extends HBox {
     private ObservableList<Event> eventList = FXCollections.observableArrayList();
 
 
-
     public SimulationController() {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("simulation.fxml"));
         fxmlLoader.setRoot(this);
@@ -100,11 +100,27 @@ public class SimulationController extends HBox {
         }
     }
 
+    /**
+     * Valida el textfield de día de simulación.
+     * @param textField contiene el textField a validar.
+     */
+    private void verifyDayTF(TextField textField) throws Exception{
+        textField.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if (!newValue.matches("\\d*")) {
+                    textField.setText(newValue.replaceAll("[^\\d]", ""));
+                }
+            }
+        });
+    }
+
     public void simulationDayButtonClicked(){
         daySelected = Integer.parseInt(simulationDayField.getText());
-        eventList.clear();
-        eventList.addAll(simulation.getDays().get(daySelected).getEvents());
-//        simulationTable.setItems(eventList);
+        if((daySelected > 0) && (daySelected <= config.getSimulationDays())) {
+            eventList.clear();
+            eventList.addAll(simulation.getDays().get(daySelected - 1).getEvents());
+        }
     }
 
     /**
@@ -125,20 +141,20 @@ public class SimulationController extends HBox {
         node.boundsInParentProperty().addListener(new ChangeListener<Bounds>() {
             @Override public void changed(ObservableValue<? extends Bounds> ov, Bounds oldBounds, Bounds bounds) {
                 dataText.setLayoutX(
-                        Math.round(
-                                bounds.getMinX() + bounds.getWidth() / 2 - dataText.prefWidth(-1) / 2
-                        )
+                    Math.round(
+                        bounds.getMinX() + bounds.getWidth() / 2 - dataText.prefWidth(-1) / 2
+                    )
                 );
                 dataText.setLayoutY(
-                        Math.round(
-                                bounds.getMinY() - dataText.prefHeight(-1) * 0.5
-                        )
+                    Math.round(
+                        bounds.getMinY() - dataText.prefHeight(-1) * 0.5
+                    )
                 );
             }
         });
     }
 
-    public void display(Config config, Boolean simulationTableCheck){
+    public void display(Config config, Boolean simulationTableCheck) throws Exception{
         Stage window = new Stage();
         window.setResizable(false);
 
@@ -148,6 +164,8 @@ public class SimulationController extends HBox {
         statisticsVB.setPadding(new Insets(0,0,0,20));
 
         eventList.addAll(simulation.getDays().get(0).getEvents());
+
+        verifyDayTF(simulationDayField);
 
         //Creación de las columnas de la tabla de simulación
         //Eventos
@@ -201,6 +219,8 @@ public class SimulationController extends HBox {
         simulationTable.setFocusTraversable(false);
         if (!simulationTableCheck){
             simulationTable.setManaged(false);
+            simulationDayButton.setManaged(false);
+            simulationDayField.setManaged(false);
         }
 
         HBox hb = new HBox();
@@ -329,10 +349,10 @@ public class SimulationController extends HBox {
 */
         //Recomendación cuando el tiempo de espera es mayor a 15 minutos
         if (simulation.calculateClientWaitTime()>15){
-            AlertBox.display("Advertencia: Objetivo no cumplido", "                         El objetivo no se cumple.\nSe recomienda agregar más trabajadores, mejorar su desempeño o limitar la llegada de clientes estableciendo citas");
+            AlertBox.display("Advertencia: Objetivo no cumplido", "                                 El objetivo no se cumple.\nSe recomienda agregar más trabajadores, mejorar su desempeño o limitar la llegada de clientes estableciendo citas.");
         }
         else{
-            AlertBox.display("Objetivo cumplido", "                         El objetivo se cumple.\n Los clientes no esperan más de 15 minutos para ser atendidos");
+            AlertBox.display("Objetivo cumplido", "                                 El objetivo se cumple.\n Los clientes no esperan más de 15 minutos para ser atendidos.");
         }
     }
 
